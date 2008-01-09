@@ -29,6 +29,8 @@ public:
 	void	Start();
 	void	Stop();
 	
+	void	FadeOut(float time);
+	
 	float	GetTime();	 // how far through this music have we gotten?
 	
 	void	Rewind();

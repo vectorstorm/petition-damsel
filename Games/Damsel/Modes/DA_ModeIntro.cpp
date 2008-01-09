@@ -100,6 +100,7 @@ daModeIntro::Init()
 		m_word[i]->SetColor( vsColor::Black );
 		m_word[i]->SetPosition(m_wordOrigPos[i]);
 		m_word[i]->SetScale(1.0f);
+		m_word[i]->SetAngle(vsAngle::Zero);
 	}
 	
 	for ( int i = 0; i < INTRO_LINES; i++ )

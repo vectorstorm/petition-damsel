@@ -88,6 +88,8 @@ daModeTitleScreen::Init()
 	m_menu->SetPosition(m_iniMenuPos);
 	m_title->SetPosition(m_iniTitlePos);
 	m_title->SetColor(vsColor::Black);
+	
+	m_game->PlayMusic( daGame::Music_Title );
 }
 
 void
@@ -154,22 +156,26 @@ daModeTitleScreen::Update( float timeStep )
 						m_transitioningOut = true;
 						m_transitionTimer = 0.f;
 						m_transitioningOutTo = NewGame;
+						m_game->FadeOutMusic(c_transitionDuration);
 						break;
 					case HowToPlay:
 						m_transitioningOut = true;
 						m_transitionTimer = 0.f;
 						m_transitioningOutTo = HowToPlay;
 						//m_game->GetHowToPlayScreen()->Show(true);
+						m_game->FadeOutMusic(c_transitionDuration);
 						break;
 					case Options:
 						m_transitioningOut = true;
 						m_transitionTimer = 0.f;
 						m_transitioningOutTo = Options;
+						m_game->FadeOutMusic(c_transitionDuration);
 						break;
 					case Credits:
 						m_transitioningOut = true;
 						m_transitionTimer = 0.f;
 						m_transitioningOutTo = Credits;
+						m_game->FadeOutMusic(c_transitionDuration);
 						break;
 					case Quit:
 						core::SetExitToMenu();

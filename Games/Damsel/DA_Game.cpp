@@ -43,8 +43,13 @@ daGame::Init()
 	
 	m_music[Music_Quote] = new sndMusic("Leaving the theatre.mp3");
 	m_music[Music_Title] = new sndMusic("Poppin Pills.mp3");
+	m_currentMusic = NULL;
 	
-	SetGameMode( m_mode[Mode_Intro] );
+	// TODO:  Check whether we've been through here before, and if so, go into TitleScreen!
+
+//	SetGameMode( m_mode[Mode_Intro] );
+//	SetGameMode( m_mode[Mode_TitleScreen] );
+	SetGameMode( m_mode[Mode_Credits] );
 }
 
 void
@@ -74,7 +79,18 @@ daGame::SetMode( GameMode mode )
 void
 daGame::PlayMusic( GameMusic type )
 {
-	m_music[type]->Start();
+	if ( m_currentMusic != m_music[type] || !m_currentMusic->IsPlaying() )
+	{
+		m_music[type]->Start();
+		m_currentMusic = m_music[type];
+	}
+}
+
+void
+daGame::FadeOutMusic( float time )
+{
+	vsAssert(m_currentMusic, "No music set!");
+	m_currentMusic->FadeOut(time);
 }
 
 void

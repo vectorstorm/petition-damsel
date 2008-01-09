@@ -117,7 +117,7 @@ vsSystem::Init()
 	// Get GL context attributes
 	printAttributes ();
 	
-	SDL_WM_SetCaption("VectorStorm",NULL);
+	SDL_WM_SetCaption("Game a Week 1 -- Damsel",NULL);
 }
 
 void
@@ -151,7 +151,7 @@ vsSystem::UpdateVideoMode()
 	// Get GL context attributes
 	printAttributes ();
 	
-	SDL_WM_SetCaption("VectorStorm",NULL);
+	SDL_WM_SetCaption("Game a Week 1 -- Damsel",NULL);
 
 	memHeap::Pop(&gGlobalHeap);
 

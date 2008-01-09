@@ -52,8 +52,6 @@ vsRendererSimple::Init(int width, int height, int depth, bool fullscreen)
 		return;
 	}
 	
-	SDL_WM_SetCaption("VectorStorm Engine",NULL);
-	
 	glShadeModel( GL_SMOOTH );
 	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	glClearDepth( 1.0f );  // arbitrary large value

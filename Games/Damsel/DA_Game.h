@@ -39,6 +39,7 @@ private:
 	coreGameMode *		m_mode[MODE_MAX];
 	
 	sndMusic *			m_music[MUSIC_MAX];
+	sndMusic *			m_currentMusic;
 	
 public:
 					daGame();
@@ -53,6 +54,7 @@ public:
 	
 	void			SetMode( GameMode mode );
 	void			PlayMusic( GameMusic type );
+	void			FadeOutMusic( float time );
 };
 
 #endif // DA_GAME_H

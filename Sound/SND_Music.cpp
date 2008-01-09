@@ -69,6 +69,12 @@ sndMusic::Stop()
 	}
 }
 
+void
+sndMusic::FadeOut( float time )
+{
+	Mix_FadeOutMusic(time * 1000);
+}
+
 float
 sndMusic::GetTime()
 {
