@@ -1,0 +1,13 @@
+SetColor 1.0 1.0 1.0 0.8
+MoveTo -20 40
+LineTo 20 40
+LineTo 40 20
+LineTo 40 -20
+LineTo 20 -40
+LineTo 0 -40
+LineTo 0 -10
+LineTo -20 -40
+LineTo -40 -20
+LineTo -20 0
+LineTo -40 20
+LineTo -20 40
