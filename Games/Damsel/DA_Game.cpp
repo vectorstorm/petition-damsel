@@ -47,9 +47,9 @@ daGame::Init()
 	
 	// TODO:  Check whether we've been through here before, and if so, go into TitleScreen!
 
-//	SetGameMode( m_mode[Mode_Intro] );
+	SetGameMode( m_mode[Mode_Intro] );
 //	SetGameMode( m_mode[Mode_TitleScreen] );
-	SetGameMode( m_mode[Mode_Credits] );
+//	SetGameMode( m_mode[Mode_Credits] );
 }
 
 void

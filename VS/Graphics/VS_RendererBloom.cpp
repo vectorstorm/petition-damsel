@@ -438,7 +438,7 @@ vsRendererBloom::PreRender()
     // Draw 3D scene.
     BindSurface(&m_scene);
 	glBlendFunc( GL_ONE, GL_ZERO );
-	//ClearSurface();
+	ClearSurface();
 	Parent::PreRender();
 }
 
@@ -517,7 +517,7 @@ vsRendererBloom::PostRender()
 	*/
     // Downsample the scene into the source surfaces.
     glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_pass[0].texture);
+	//glBindTexture(GL_TEXTURE_2D, m_pass[0].texture);
     for (p = 1; p < FILTER_COUNT; p++)
     {
         BindSurface(&m_pass[p]);
