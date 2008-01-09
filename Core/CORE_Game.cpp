@@ -16,8 +16,6 @@
 #include "COL_System.h"
 #include "SND_System.h"
 
-#include "GM_MainMenu.h"
-#include "AST_Game.h"
 #include "VS_Layer.h"
 #include "VS_Screen.h"
 #include "VS_Sprite.h"

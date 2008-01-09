@@ -26,7 +26,7 @@ protected:
 	typedef vsEntity Parent;
 	
 public:
-	vsTransform	m_transform;
+	vsTransform		m_transform;
 	
 	static vsSprite * Load(const vsString &filename);
 	
@@ -39,6 +39,9 @@ public:
 	vsVector2D		GetPosition() { return m_transform.m_position; }
 	void			SetAngle( const vsAngle &angle ) { m_transform.m_angle = angle; }
 	vsAngle			GetAngle() { return m_transform.m_angle; }
+	void			SetScale( float scale ) { m_transform.m_scale = vsVector2D(scale,scale); }
+	void			SetScale( const vsVector2D &scale ) { m_transform.m_scale = scale; }
+	vsVector2D		GetScale() { return m_transform.m_scale; }
 	
 	float			GetBoundingRadius() { return m_boundingRadius; }
 	

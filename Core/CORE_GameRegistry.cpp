@@ -26,7 +26,7 @@ coreGameRegistry::RegisterGame( coreGameEntry *entry )
 {
 	vsAssert( s_gameEntries < MAX_GAMES, "Too many games registered!" );	// if this assert fires, we need to increase the value of MAX_GAMES
 	
-	if ( entry->m_name == "MainMenu" )
+	if ( entry->m_name == "Damsel" )	// Damsel is our 'main menu' in this custom build.
 	{
 		s_mainMenu = entry;
 	}

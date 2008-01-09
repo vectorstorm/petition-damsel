@@ -44,6 +44,9 @@ int lookup_letterIndex( char letter )
 		case '_' : return 48;
 		case '<' : return 49;
 		case '>' : return 50;
+		case ',' : return 51;
+		case '"' : return 52;
+		case ';' : return 53;	// actually back-quotes.  Hope I never need to use a semicolon!
 		default:  return -1;
 	}		
 }
@@ -71,7 +74,7 @@ vsVector2D P [24] = {
 	
 };
 // Vector strokes (indexed into P).
-static int st_nick53[51][15] = {
+static int st_nick53[54][15] = {
 	/* A */ { 13,4,2,6,15,0,10,6,-1 },
 	/* B */ { 13,1,2,6,8,12,14,13,-1 },
 	/* C */ { 12,14,10,4,2,6,-1 },
@@ -124,10 +127,16 @@ static int st_nick53[51][15] = {
 	/* ! */ { 11,13,14,11,0,8,2,-1 },
 	/* _ */ { 13,15,-1 },
 	/* < */ { 6,7,12,-1 },
-	/* > */ { 4,9,10,-1 }
+	/* > */ { 4,9,10,-1 },
+	/* , */ { 11,13,20,11,-1 },
+	/* " */ { 1,2,5,1,0,2,3,6,2,-1 },
+	/* ; */ { 1,2,4,1,0,2,3,5,2,-1 },
 	///* @ */ { 12,5,11,6,2,4,10,14,15,-1 }
 	///* @ */ { 12,5,11,12,9,2,4,10,14,15,-1 }
 };
+
+static const float c_kerningFactor = 0.6f;
+static const float c_spaceKerning = 0.8f;	// space width, compared to a regular character
 
 
 void
@@ -137,7 +146,12 @@ vsBuiltInFont::BuildDisplayListFromCharacter( vsDisplayList *list, char c, float
 	char upperChar = toupper(thisChar);
 	float thisSize = size;
 	
-	if ( thisChar == upperChar && capSize > 0.f )
+	if ( thisChar == ' ' )
+	{
+		// half width spaces, because that looks better.
+		thisSize *= c_spaceKerning;
+	}
+	else if ( thisChar == upperChar && capSize > 0.f )
 	{
 		thisSize = capSize;
 	}
@@ -145,7 +159,6 @@ vsBuiltInFont::BuildDisplayListFromCharacter( vsDisplayList *list, char c, float
 	AppendCharacterToList( thisChar, list, vsVector2D::Zero, thisSize );
 }
 
-float c_kerningFactor = 0.6f;
 
 void
 vsBuiltInFont::BuildDisplayListFromString( vsDisplayList *list, const char *string, float size, float capSize, JustificationType j )
@@ -169,7 +182,12 @@ vsBuiltInFont::BuildDisplayListFromString( vsDisplayList *list, const char *stri
 		char upperChar = toupper(thisChar);
 		float thisSize = size;
 		
-		if ( thisChar == upperChar && capSize > 0.f )
+		if ( thisChar == ' ' )
+		{
+			// half width spaces, because that looks better.
+			thisSize *= c_spaceKerning;
+		}
+		else if ( thisChar == upperChar && capSize > 0.f )
 		{
 			thisSize = capSize;
 		}
@@ -183,12 +201,17 @@ vsBuiltInFont::BuildDisplayListFromString( vsDisplayList *list, const char *stri
 vsDisplayList * 
 vsBuiltInFont::CreateString_Internal(const char* string, float size, float capSize, JustificationType j)
 {
+	vsDisplayList *result = NULL;
 	vsDisplayList loader(1024 * 10);
 	
 	BuildDisplayListFromString( &loader, string, size, capSize, j );
 	
-	vsDisplayList *result = new vsDisplayList( loader.GetSize() );
-	result->Append(loader);
+	int displayListSize = loader.GetSize();
+	if ( displayListSize )
+	{
+		result = new vsDisplayList( displayListSize );
+		result->Append(loader);
+	}
 	
 	return result;
 }
@@ -248,13 +271,13 @@ vsBuiltInFont::AppendCharacterToList( char c, vsDisplayList *list, const vsVecto
 }
 
 float
-vsBuiltInFont::GetStringWidth( const char *string, float size, float capSize )
+vsBuiltInFont::GetStringWidth( const vsString &string, float size, float capSize )
 {
 	if ( capSize == 0.f )
 		capSize = size;
 	
 	float width = 0.f;
-	size_t len = strlen(string);
+	size_t len = strlen(string.c_str());
 	
 	for ( size_t i = 0; i < len; i++ )
 	{
@@ -262,7 +285,12 @@ vsBuiltInFont::GetStringWidth( const char *string, float size, float capSize )
 		char upperChar = toupper(thisChar);
 		float thisSize = size;
 		
-		if ( thisChar == upperChar && capSize > 0.f )
+		if ( thisChar == ' ' )
+		{
+			// half width spaces, because that looks better.
+			thisSize *= c_spaceKerning;
+		}
+		else if ( thisChar == upperChar && capSize > 0.f )
 		{
 			thisSize = capSize;
 		}

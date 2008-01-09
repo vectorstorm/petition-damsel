@@ -33,7 +33,7 @@ public:
 	static vsDisplayList * CreateString(const vsString &string, float size, float capSize=0.f, JustificationType j = Justification_Left);
 	static vsDisplayList * CreateCharacter(char letter, float size, float capSize=0.f);
 	
-	static float			GetStringWidth(const char* string, float size, float capSize=0.f);
+	static float			GetStringWidth(const vsString &string, float size, float capSize=0.f);
 };
 
 #endif // VS_FONT_H

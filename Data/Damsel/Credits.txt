@@ -1,0 +1,80 @@
+-- Music Tracks --
+
+
+Leaving the Theatre
+Copyright 2007 by Ehren Starks
+http://magnatune.com/artists/ehren
+
+Licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 1.0 license.
+
+
+Popping Pills
+Copyright 2007 by Napolean Blown Apart
+http://magnatune.com/artists/blownaparts
+
+Licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 1.0 license.
+
+
+
+
+
+-- Sound Effects --
+
+
+
+
+-- Other Data --
+
+All other data files are Copyright 2008 by Trevor Powell.
+License to modify, distribute, etc. are granted under the
+Creative Commons Attribution-NonCommerial-ShareAlike 2.0
+license.
+
+
+
+
+-- Inspiration --
+
+Game inspired by a passage from Don Quixote, by Cervantes.
+Translated by J.M.Cohen.
+Published by Penguin Classics
+Translation Copyright 1950
+
+
+
+
+-- Code --
+
+All code written by Trevor Powell, and released under the GPLv3.
+
+
+
+
+
+
+Copyright 2008
+
+
+
+
+
+No vectors were harmed in the making of this game.
+
+
+
+
+
+Ill-Timed Damsel is a "Game a Week; project.
+Number 1 in the series.
+
+
+
+
+
+
+
+
+Thank you for playing.
+

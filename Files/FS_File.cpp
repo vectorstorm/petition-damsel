@@ -190,7 +190,7 @@ fsFile::GetFullFilename(const vsString &filename_in)
 	}
 	
 #if defined(__APPLE_CC__) && !defined(CMAKE_BUILD)
-	vsString result = vsFormatString("VectorStorm.app/Contents/Resources/Data/%s/%s", dirName.c_str(), filename_in.c_str());
+	vsString result = vsFormatString("Damsel.app/Contents/Resources/Data/%s/%s", dirName.c_str(), filename_in.c_str());
 #else // !__APPLE_CC__
 	vsString result = vsFormatString("Data/%s/%s", dirName.c_str(), filename_in.c_str());
 #endif // __APPLE_CC__
