@@ -1,0 +1,9 @@
+# 8.5x11 paper.  Now's the time to roll your eyes, folks.
+MoveTo 4.25 -2.5
+LineTo 4.25 5.5
+LineTo -4.25 5.5
+LineTo -4.25 -5.5
+LineTo 1.25 -5.5
+LineTo 4.25 -2.5
+LineTo 1.25 -2.5
+LineTo 1.25 -5.5

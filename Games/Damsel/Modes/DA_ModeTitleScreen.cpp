@@ -118,7 +118,7 @@ daModeTitleScreen::Update( float timeStep )
 			if ( m_transitioningOut )
 			{
 				if ( m_transitioningOutTo == NewGame )
-					m_game->SetMode(daGame::Mode_Intro);
+					m_game->SetMode(daGame::Mode_InGame);	// Mode_LevelSelect?  Are levels appropriate for this game?
 				if ( m_transitioningOutTo == Options )
 					m_game->GoToPreferences();
 				if ( m_transitioningOutTo == Credits )
@@ -156,7 +156,6 @@ daModeTitleScreen::Update( float timeStep )
 						m_transitioningOut = true;
 						m_transitionTimer = 0.f;
 						m_transitioningOutTo = NewGame;
-						m_game->FadeOutMusic(c_transitionDuration);
 						break;
 					case HowToPlay:
 						m_transitioningOut = true;

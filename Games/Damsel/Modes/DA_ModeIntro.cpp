@@ -11,6 +11,7 @@
 
 #include "DA_Game.h"
 
+#include "SND_Sample.h"
 #include "SYS_Input.h"
 
 #include "VS_Font.h"
@@ -236,7 +237,7 @@ daModeIntro::TransitionIn( float timeStep )
 				nowAngle = vsInterpolate(frac, vsAngle::Zero, finalAngle);
 			m_word[i]->SetAngle(nowAngle);
 			
-			newWordPos.y -= 100.0f;
+			newWordPos.y -= 60.0f;
 			
 			wordId--;
 		}

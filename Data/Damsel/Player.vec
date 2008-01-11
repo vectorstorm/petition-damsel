@@ -1,0 +1,29 @@
+# Blouse
+MoveTo 0 -5
+LineTo 0 -18
+LineTo 10 -18
+LineTo 12 -5
+LineTo 0 -5
+# Skirt
+LineTo -8 5
+LineTo 5 10
+LineTo 15 5
+LineTo 12 -5
+# Head
+MoveTo 0 -18
+LineTo -5 -23
+LineTo -5 -25
+MoveTo 10 -18
+LineTo 15 -23
+LineTo 15 -35
+# Hair
+MoveTo 16 -35
+LineTo 0 -35
+LineTo -5 -20
+LineTo -6 -5
+LineTo -10 0
+LineTo -12 -12
+LineTo -8 -45
+LineTo 5 -48
+LineTo 15 -40
+LineTo 16 -35

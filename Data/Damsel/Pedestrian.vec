@@ -1,0 +1,5 @@
+MoveTo -20 -50
+LineTo 20 -50
+LineTo 20 20
+LineTo -20 20
+LineTo -20 -50

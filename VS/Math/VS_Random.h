@@ -22,9 +22,12 @@ public:
 	static float GetFloat(float min, float max);
 	static int			GetInt(int max);
 	static int			GetInt(int min, int max);
+	static bool			GetBool() { return !!GetInt(2); }
 	
 	static vsVector2D	GetVector2D(float maxLength);
 	static vsColor		GetColor(float minBrightness, float maxBrightness);
+	
+	static vsVector2D	GetVector2D(const vsVector2D &topLeft, const vsVector2D &bottomRight);
 };
 
 #endif // VS_RANDOM_H

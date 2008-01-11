@@ -29,6 +29,7 @@ colSprite::colSprite(vsDisplayList *list, int colFlags, int testFlags) : vsSprit
 	colCircle circle;
 	
 	list->GetBoundingCircle( circle.center, circle.radius );
+	//circle.center = vsVector2D::Zero;
 	circle.radius *= 0.8f;
 	m_colObject->SetBoundingCircle( circle );
 }

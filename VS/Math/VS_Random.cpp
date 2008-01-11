@@ -68,6 +68,14 @@ vsRandom::GetVector2D(float maxLength)
 	return result;
 }
 
+vsVector2D
+vsRandom::GetVector2D(const vsVector2D &topLeft, const vsVector2D &bottomRight)
+{
+	vsVector2D result( GetFloat(topLeft.x,bottomRight.x), GetFloat(topLeft.y,bottomRight.y) );
+	
+	return result;
+}
+
 vsColor
 vsRandom::GetColor(float min, float max)
 {

@@ -151,7 +151,7 @@ vsBuiltInFont::BuildDisplayListFromCharacter( vsDisplayList *list, char c, float
 		// half width spaces, because that looks better.
 		thisSize *= c_spaceKerning;
 	}
-	else if ( thisChar == upperChar && capSize > 0.f )
+	else if ( upperChar >= 'A' && upperChar <= 'Z' && thisChar == upperChar && capSize > 0.f )
 	{
 		thisSize = capSize;
 	}
@@ -187,7 +187,7 @@ vsBuiltInFont::BuildDisplayListFromString( vsDisplayList *list, const char *stri
 			// half width spaces, because that looks better.
 			thisSize *= c_spaceKerning;
 		}
-		else if ( thisChar == upperChar && capSize > 0.f )
+		else if ( upperChar >= 'A' && upperChar <= 'Z' && thisChar == upperChar && capSize > 0.f )
 		{
 			thisSize = capSize;
 		}
@@ -290,7 +290,7 @@ vsBuiltInFont::GetStringWidth( const vsString &string, float size, float capSize
 			// half width spaces, because that looks better.
 			thisSize *= c_spaceKerning;
 		}
-		else if ( thisChar == upperChar && capSize > 0.f )
+		else if ( upperChar >= 'A' && upperChar <= 'Z' && thisChar == upperChar && capSize > 0.f )
 		{
 			thisSize = capSize;
 		}

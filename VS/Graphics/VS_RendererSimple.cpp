@@ -140,6 +140,7 @@ vsRendererSimple::RawRenderDisplayList( vsDisplayList *list )
 	vsColor		cursorColor;
 	vsColor		currentColor(-1,-1,-1,0);
 	vsColor		nextColor;
+	bool		colorSet = false;
 	bool		cursorSet = false;
 	bool		inLineStrip = false;
 	bool		inPointList = false;
@@ -165,6 +166,7 @@ vsRendererSimple::RawRenderDisplayList( vsDisplayList *list )
 			case vsDisplayList::OpCode_SetColor:
 			{
 				nextColor = op->data.GetColor();
+				colorSet = true;
 				break;
 			}
 			case vsDisplayList::OpCode_MoveTo:
@@ -182,7 +184,7 @@ vsRendererSimple::RawRenderDisplayList( vsDisplayList *list )
 				{
 					glBegin( GL_LINE_STRIP );
 					
-					if ( cursorColor != currentColor )
+					if ( colorSet && cursorColor != currentColor )
 					{
 						glColor4f( cursorColor.r, cursorColor.g, cursorColor.b, cursorColor.a );
 						currentColor = cursorColor;
@@ -191,7 +193,7 @@ vsRendererSimple::RawRenderDisplayList( vsDisplayList *list )
 					inLineStrip = true;
 				}
 
-				if ( nextColor != currentColor )
+				if ( colorSet && nextColor != currentColor )
 				{
 					glColor4f( nextColor.r, nextColor.g, nextColor.b, nextColor.a );
 					currentColor = nextColor;
@@ -212,6 +214,12 @@ vsRendererSimple::RawRenderDisplayList( vsDisplayList *list )
 				}
 				vsVector2D pos = op->data.GetVector2D();
 				glVertex2f( pos.x, pos.y );
+				break;
+			}
+			case vsDisplayList::OpCode_CompiledDisplayList:
+			{
+				unsigned int id = op->data.GetUInt();
+				glCallList(id);
 				break;
 			}
 			case vsDisplayList::OpCode_PushTransform:

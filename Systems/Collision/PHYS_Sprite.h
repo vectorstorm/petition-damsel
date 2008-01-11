@@ -24,6 +24,8 @@ class physSprite : public colSprite
 	vsVector2D		m_force;
 	float			m_torque;
 	
+	bool			m_angleLocked;
+	
 	float			m_collBounciness;
 
 protected:
@@ -39,6 +41,7 @@ public:
 
 	
 	void			SetMass(float mass) { m_colObject->SetMass(mass); }
+	void			SetAngleLocked(bool locked) { m_angleLocked = locked; }
 	
 	void			AddForce( const vsVector2D &force ) { m_force += force; }
 	void			AddTorque( float torque ) { m_torque += torque; }

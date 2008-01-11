@@ -106,7 +106,10 @@ fsFile::Record( fsRecord *r )
 		
 		vsString line;
 		
-		ReadLine(&line);
+		do
+		{
+			ReadLine(&line);
+		}while(line[0]=='#');
 		
 		return r->FromString(line);
 	}

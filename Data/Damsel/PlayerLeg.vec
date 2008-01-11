@@ -1,0 +1,5 @@
+# Straight down leg
+MoveTo -2 8
+LineTo -2 20
+MoveTo 2 8
+LineTo 2 20

@@ -29,6 +29,7 @@ m_collBounciness(1.f)
 	// ordinarily, our angular mass (also known as "moment of inertia" for some reason I don't understand) is defined as
 	// ANGULAR_MASS = MASS * (RADIUS*RADIUS).
 	m_angularMass = m_colObject->GetMass() /* radius*/ * radius;
+	m_angleLocked = false;
 }
 
 physSprite::~physSprite()
@@ -128,7 +129,8 @@ physSprite::ApplyImpulse( const vsVector2D &where, const vsVector2D &impulse )
 	vsVector2D deltaVelocity = impulse - localVelocity;
 	
 //	float amt = ( deltaVelocity.Dot( collisionNormal ) );
-		
+	
+	if ( !m_angleLocked )
 	//if ( amt < 0.0f )
 	{
 //		float ldn = localVelocityDir.Dot(collisionNormal);

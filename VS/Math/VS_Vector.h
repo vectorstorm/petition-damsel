@@ -35,6 +35,8 @@ public:
 		
 	float	Length() const;
 	float	SqLength() const;
+	float	Magnitude() const { return Length(); }
+	float	SqMagnitude() const { return SqLength(); }
 	void	Normalise();
 	
 	float	Dot( const vsVector2D &b ) const { return ( x*b.x +

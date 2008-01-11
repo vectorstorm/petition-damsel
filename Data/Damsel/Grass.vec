@@ -1,0 +1,9 @@
+MoveTo -10 0
+LineTo -15 -10
+LineTo -4 -3
+LineTo 0 -12
+LineTo 2 -2
+LineTo 5 -5
+MoveTo 4 -3
+LineTo 8 -12
+LineTo 10 0

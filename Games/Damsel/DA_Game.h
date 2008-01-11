@@ -24,7 +24,7 @@ public:
 		Mode_Intro,
 		Mode_TitleScreen,
 		//Mode_LevelSelect,
-		//Mode_InGame,
+		Mode_InGame,
 		Mode_Credits,
 		MODE_MAX
 	};

@@ -12,6 +12,10 @@
 #include "FS_Record.h"
 #include "MEM_Store.h"
 
+#include "VS_Screen.h"
+
+#include "SDL_opengl.h"
+
 static vsString g_opCodeName[vsDisplayList::OpCode_MAX] =
 {
 	"SetColor",
@@ -91,7 +95,8 @@ vsDisplayList::vsDisplayList( int memSize ):
 	m_nextInstruction(0),
 	m_maxInstructions(maxInstructions),*/
 	m_instanceParent(NULL),
-	m_instanceCount(0)
+	m_instanceCount(0),
+	m_compiled(false)
 {
 	if ( memSize )
 	{
@@ -118,6 +123,9 @@ vsDisplayList::~vsDisplayList()
 	{
 		m_instanceParent->m_instanceCount--;
 	}
+	
+	if ( m_compiled )
+		glDeleteLists(m_displayListId,1);
 }
 
 vsDisplayList *
@@ -156,6 +164,17 @@ vsDisplayList::Rewind()
 }
 
 void
+vsDisplayList::Compile()
+{
+	m_displayListId = glGenLists(1);
+	glNewList(m_displayListId,GL_COMPILE);
+	Rewind();
+	vsScreen::Instance()->RenderDisplayList(this);
+	glEndList();
+	m_compiled = true;
+}
+
+void
 vsDisplayList::SetColor( const vsColor &color )
 {
 	m_fifo->WriteUint8( OpCode_SetColor );
@@ -184,9 +203,20 @@ vsDisplayList::DrawPoint( const vsVector2D &pos )
 }
 
 void
+vsDisplayList::DrawCompiledDisplayList( unsigned int displayListId )
+{
+	m_fifo->WriteUint8( OpCode_CompiledDisplayList );
+	m_fifo->WriteUint32( displayListId );
+}
+
+void
 vsDisplayList::Append( const vsDisplayList &list )
 {
-	if ( list.m_instanceParent )
+	if ( list.m_compiled )
+	{
+		DrawCompiledDisplayList( list.m_displayListId );
+	}
+	else if ( list.m_instanceParent )
 	{
 		Append( *list.m_instanceParent );
 	}
@@ -239,6 +269,9 @@ vsDisplayList::PopOp()
 			case OpCode_LineTo:
 			case OpCode_DrawPoint:
 				m_currentOp.data.Set( m_fifo->ReadVector2D() );
+				break;
+			case OpCode_CompiledDisplayList:
+				m_currentOp.data.Set( m_fifo->ReadUint32() );
 				break;
 			case OpCode_PushTransform:
 			case OpCode_SetCameraTransform:

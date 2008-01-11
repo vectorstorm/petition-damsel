@@ -181,8 +181,8 @@ colSystem::Test( colObject *a, colObject *b, float timeStep )
 		colCircle bC = b->GetBoundingCircle();
 		
 		// assume uniform scaling on collision object
-		aC.radius *= a->GetTransform().m_scale.x;
-		bC.radius *= b->GetTransform().m_scale.x;
+		aC.radius *= vsFabs(a->GetTransform().m_scale.x);
+		bC.radius *= vsFabs(b->GetTransform().m_scale.x);
 		
 		aC.center += a->GetLastTransform().m_position;
 		bC.center += b->GetLastTransform().m_position;
@@ -237,8 +237,8 @@ colSystem::HandleCollision( colObject *a, colObject *b, float t, float timeStep,
 	colCircle bC = b->GetBoundingCircle();
 	
 	// assume uniform scaling on collision object
-	aC.radius *= a->GetTransform().m_scale.x;
-	bC.radius *= b->GetTransform().m_scale.x;
+	aC.radius *= vsFabs(a->GetTransform().m_scale.x);
+	bC.radius *= vsFabs(b->GetTransform().m_scale.x);
 	
 	aC.center += a->GetLastTransform().m_position;
 	bC.center += b->GetLastTransform().m_position;

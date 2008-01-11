@@ -29,8 +29,9 @@ Attribution-NonCommercial-ShareAlike 1.0 license.
 
 All other data files are Copyright 2008 by Trevor Powell.
 License to modify, distribute, etc. are granted under the
-Creative Commons Attribution-NonCommerial-ShareAlike 2.0
+Creative Commons Attribution-NonCommercial-ShareAlike 2.0
 license.
+
 
 
 
@@ -41,6 +42,7 @@ Game inspired by a passage from Don Quixote, by Cervantes.
 Translated by J.M.Cohen.
 Published by Penguin Classics
 Translation Copyright 1950
+
 
 
 
@@ -66,8 +68,14 @@ No vectors were harmed in the making of this game.
 
 
 
-Ill-Timed Damsel is a "Game a Week; project.
+Ill-Timed Petition Damsel is a "Game in a Week; project.
 Number 1 in the series.
+
+
+
+
+Find more free games at:
+http://www.vectorstorm.org/
 
 
 

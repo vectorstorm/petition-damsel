@@ -13,6 +13,7 @@
 #include "CORE_GameRegistry.h"
 
 #include "DA_ModeCredits.h"
+#include "DA_ModeInGame.h"
 #include "DA_ModeIntro.h"
 #include "DA_ModeTitleScreen.h"
 
@@ -38,7 +39,7 @@ daGame::Init()
 
 	m_mode[Mode_TitleScreen] = new daModeTitleScreen(this);
 	//m_mode[Mode_LevelSelect] = new daModeIntro(this);
-	//m_mode[Mode_InGame] = new daModeIntro(this);
+	m_mode[Mode_InGame] = new daModeInGame(this);
 	m_mode[Mode_Credits] = new daModeCredits(this);
 	
 	m_music[Music_Quote] = new sndMusic("Leaving the theatre.mp3");
@@ -50,6 +51,7 @@ daGame::Init()
 	SetGameMode( m_mode[Mode_Intro] );
 //	SetGameMode( m_mode[Mode_TitleScreen] );
 //	SetGameMode( m_mode[Mode_Credits] );
+//	SetGameMode( m_mode[Mode_InGame] );
 }
 
 void
@@ -91,6 +93,7 @@ daGame::FadeOutMusic( float time )
 {
 	vsAssert(m_currentMusic, "No music set!");
 	m_currentMusic->FadeOut(time);
+	m_currentMusic = NULL;
 }
 
 void

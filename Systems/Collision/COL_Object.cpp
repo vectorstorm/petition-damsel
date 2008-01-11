@@ -36,6 +36,7 @@ m_active(false)
 
 colObject::~colObject()
 {
+	Extract();
 }
 
 void
