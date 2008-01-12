@@ -26,7 +26,8 @@ daPedestrian::daPedestrian( daModeInGame *mode ):
 	daBasicPerson( false ),
 	m_mode(mode),
 	m_spawned(false),
-	m_homingOnTarget(false)
+	m_homingOnTarget(false),
+	m_focusedPetition(NULL)
 {
 	colCircle circle;
 	circle.center = vsVector2D::Zero;
@@ -37,9 +38,23 @@ daPedestrian::daPedestrian( daModeInGame *mode ):
 void
 daPedestrian::Update(float timeStep)
 {
-	UNUSED(timeStep);
-	
-	m_focusedPetition = m_mode->FindAvailablePetition( GetPosition() );
+	if ( m_focusedPetition )
+	{
+		if ( !m_focusedPetition->AttractsPedestrians() )
+			m_focusedPetition = NULL;
+		else if ( m_attemptedSigning )
+		{
+			m_postSigningPetitionInterest -= timeStep;
+			if ( m_postSigningPetitionInterest < 0.f )
+			{
+				m_focusedPetition = NULL;
+				SetColor( vsColor(0.0f,0.0f,0.5f,1.0f) );
+			}
+		}
+	}
+
+	if ( !m_attemptedSigning && !m_focusedPetition )
+		m_focusedPetition = m_mode->FindAvailablePetition( GetPosition() );
 	
 	if ( !m_homingOnTarget )
 		PickTarget();
@@ -94,7 +109,17 @@ daPedestrian::GoToTarget()
 	}
 	else if ( delta.Length() < 50.0f )
 	{
-		m_homingOnTarget = false;
+		if ( m_focusedPetition )
+		{
+			if ( !m_attemptedSigning )
+			{
+				m_focusedPetition->Sign();
+				m_attemptedSigning = true;
+				m_postSigningPetitionInterest = 3.0f;	// interested for three seconds after signing, then wander off.
+			}
+		}
+		else
+			m_homingOnTarget = false;
 	}
 	else
 	{
@@ -146,6 +171,7 @@ daPedestrian::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, flo
 		if ( !noOverlap || tries++ > 10 ||
 			!core::GetGame()->GetCollision()->CollisionTest( where, nextPos, radius, m_colObject->GetTestFlags() ) )
 		{
+			SetColor( vsColor::Blue );
 			SetPosition(where);
 			m_exit = where_out;
 			
@@ -162,6 +188,8 @@ daPedestrian::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, flo
 			
 			m_spawned = true;
 			m_homingOnTarget = false;
+			m_focusedPetition = NULL;
+			m_attemptedSigning = false;
 		}
 	}
 }
@@ -175,3 +203,21 @@ daPedestrian::Despawn()
 }
 
 
+bool
+daPedestrian::CollisionCallback( const colEvent &collision )
+{
+	if ( collision.colFlags & ColFlag_Shot )
+	{
+		SetDestroyed();
+
+		return true;
+	}
+	
+	return Parent::CollisionCallback( collision );
+}
+
+void
+daPedestrian::DestroyCallback()
+{
+	Despawn();
+}

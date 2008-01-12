@@ -22,9 +22,9 @@
 daHud::daHud( daModeInGame *mode ):
 m_gameMode(mode),
 m_score(-1),
-m_highScore(-1),
+m_seconds(-1),
 m_scoreList(NULL),
-m_highScoreList(NULL),
+m_timeList(NULL),
 m_opacity(0.f),
 m_fadingFrom(0.f),
 m_fadingTo(0.f),
@@ -34,41 +34,49 @@ m_fading(false)
 	
 	m_petitionList = vsDisplayList::Load("Petition.vec");
 	
+	m_signatures = vsBuiltInFont::CreateString("Signatures: ", 20.0f, 25.0f, Justification_Right);
+	m_timeRemaining = vsBuiltInFont::CreateString("Time left: ", 20.0f, 25.0f, Justification_Right);
+	
 	BuildScoreLists();
 }
 
 daHud::~daHud()
 {
 	delete m_petitionList;
+	delete m_signatures;
+	delete m_timeRemaining;
 	if ( m_scoreList )
 		delete m_scoreList;
-	if ( m_highScoreList )
-		delete m_highScoreList;
+	if ( m_timeList )
+		delete m_timeList;
 }
 
 void
 daHud::BuildScoreLists()
 {
 	int newScore = m_gameMode->GetScore();
-	int newHighScore = m_gameMode->GetHighScore();
+	int seconds = (int)m_gameMode->GetTimeLeft();
 	
 	if ( !m_scoreList || newScore != m_score )
 	{
 		if ( m_scoreList )
 			delete m_scoreList;
 		
-		vsString scoreString = vsFormatString("%08d", newScore);
+		vsString scoreString = vsFormatString("%d", newScore);
 		m_scoreList = vsBuiltInFont::CreateString( scoreString, 30.0f );
 		m_score = newScore;
 	}
-	if ( !m_highScoreList || newHighScore != m_highScore )
+	if ( !m_timeList || seconds != m_seconds )
 	{
-		if ( m_highScoreList )
-			delete m_highScoreList;
+		if ( m_timeList )
+			delete m_timeList;
 		
-		vsString highscoreString = vsFormatString("%08d", newHighScore);
-		m_highScoreList = vsBuiltInFont::CreateString( highscoreString, 20.0f );
-		m_highScore = newHighScore;
+		int minutes = seconds/60;
+		seconds -= minutes*60;
+		
+		vsString timeString = vsFormatString("%01d:%02d", minutes, seconds);
+		m_timeList = vsBuiltInFont::CreateString( timeString, 20.0f );
+		m_seconds = seconds;
 	}
 }
 
@@ -102,17 +110,19 @@ daHud::_Draw( vsDisplayList *list )
 	list->SetColor( vsColor::Blue * m_opacity );
 	if ( m_scoreList )
 	{
-		t.m_position.Set(-520.f, -440.f);
+		t.m_position.Set(-250.f, -440.f);
 		list->PushTransform(t);
+		list->Append(*m_signatures);
 		list->Append(*m_scoreList);
 		list->PopTransform();
 	}
 	
-	if ( m_highScoreList )
+	if ( m_timeList )
 	{
-		t.m_position.Set(-40.f, -440.f);
+		t.m_position.Set(450, -440.f);
 		list->PushTransform(t);
-		list->Append(*m_highScoreList);
+		list->Append(*m_timeRemaining);
+		list->Append(*m_timeList);
 		list->PopTransform();
 	}
 }

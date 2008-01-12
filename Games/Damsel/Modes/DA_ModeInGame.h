@@ -35,13 +35,15 @@ class daModeInGame : public coreGameMode
 	daCar *					m_car[MAX_CARS];
 	daCamera *				m_camera;
 
-	daPetition *		m_petition[MAX_PETITIONS];
+	daPetition *			m_petition[MAX_PETITIONS];
 
 	daLevelBackground *		m_background;
 	daHud *					m_hud;
 	
 	int						m_score;
 	int						m_highScore;
+	
+	float					m_timeLimit;
 	
 	float					m_carSpawnTimer;
 	float					m_petitionSpawnTimer;
@@ -62,6 +64,11 @@ public:
 	int				GetHighScore() { return m_highScore; }
 	int				GetPetitionsInHand();
 	daPetition *	GetPetitionFromInventory();
+	
+	void			AddSignature();
+	
+	void			AddTimeLeft(float amt) { m_timeLimit += amt; }
+	float			GetTimeLeft() { return m_timeLimit; }
 	
 	virtual void	Update(float timeStep);
 	

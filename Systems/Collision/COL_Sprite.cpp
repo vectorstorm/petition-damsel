@@ -49,8 +49,9 @@ colSprite::Teleport()
 void
 colSprite::Update( float timeStep )
 {
-	UNUSED(timeStep);
 	m_colObject->SetTransform( m_transform );
+	
+	Parent::Update(timeStep);
 }
 
 bool

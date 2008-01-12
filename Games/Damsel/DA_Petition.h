@@ -12,6 +12,8 @@
 
 #include "VS_Sprite.h"
 
+class daModeInGame;
+
 class daPetition : public vsSprite
 {
 	enum State
@@ -24,6 +26,7 @@ class daPetition : public vsSprite
 		Dead		// Been used, not yet been respawned as a pickup.
 	};
 	
+	daModeInGame *	m_mode;
 	vsSprite *	m_player;
 	
 	vsVector2D	*m_verts;
@@ -31,13 +34,15 @@ class daPetition : public vsSprite
 	int			m_signatures;
 	int			m_maxSignatures;
 	
+	float		m_timer;
+	
 	vsVector2D	m_dropDestination;
 	
 	State		m_state;
 	
 	virtual void _Draw( vsDisplayList *list );
 public:
-				daPetition(int maxSignatures);
+				daPetition(daModeInGame *mode, int maxSignatures);
 	virtual		~daPetition();
 	
 	virtual void	Update( float timeStep );
@@ -51,11 +56,14 @@ public:
 	bool		AvailableForPickup() { return (m_state == Pickup); }
 	bool		InInventory() { return (m_state == Inventory); }
 	
+	void		Sign();
+	
 	void		PickedUp();
 	void		HeldUp( vsSprite *player );
 	void		DroppedAt( vsVector2D pos );
 	void		Thrown( vsVector2D source, vsVector2D destination );
 	void		Spawn(const vsVector2D &where);
+	void		Despawn();
 };
 
 #endif // DA_PETITION_H

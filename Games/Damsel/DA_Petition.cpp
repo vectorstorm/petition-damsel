@@ -8,11 +8,15 @@
  */
 
 #include "DA_Petition.h"
+#include "DA_ModeInGame.h"
 
 #include "VS_DisplayList.h"
+#include "VS_Font.h"
+#include "VS_Transform.h"
 
-daPetition::daPetition(int maxSignatures):
+daPetition::daPetition(daModeInGame *mode, int maxSignatures):
 	vsSprite(vsDisplayList::Load("Petition.vec")),
+	m_mode(mode),
 	m_signatures(0),
 	m_maxSignatures(maxSignatures),
 	m_state(daPetition::Dead)
@@ -59,6 +63,16 @@ daPetition::Update( float timeStep )
 		
 		SetPosition( GetPosition() + delta );
 	}
+	
+	if ( m_state == Held || m_state == Dropping || m_state == Dropped )
+	{
+		m_timer -= timeStep;
+		
+		if ( m_timer < 0.0f )
+		{
+			Despawn();
+		}
+	}
 }
 
 void
@@ -66,13 +80,22 @@ daPetition::_Draw( vsDisplayList *list )
 {
 	// draw lines around us, to denote how close we are to fully signed
 	
-	if ( m_state == Held || m_state == Dropped )
+	if ( m_state == Held || m_state == Dropping || m_state == Dropped )
 	{
+		vsTransform t;
+		if ( m_state == Held && m_player->GetScale().x < 0.f )	// flipped!
+		{
+			t.m_scale.Set(-1.0f,1.0f);
+		}
+		list->PushTransform(t);
+
+		vsColor darkRed(0.5f,0.0f,0.0f,1.0f);
+		vsColor green(0.0f,0.6f,0.0f,1.0f);
 		bool enoughSignatures = true;
 		if ( m_signatures )
-			list->SetColor( vsColor::Green );
+			list->SetColor( green );
 		else
-			list->SetColor( vsColor::Red );
+			list->SetColor( darkRed );
 		list->MoveTo(m_verts[0]);
 		
 		for ( int i = 1; i < m_maxSignatures; i++ )
@@ -80,10 +103,19 @@ daPetition::_Draw( vsDisplayList *list )
 			if ( enoughSignatures && i >= m_signatures )
 			{
 				enoughSignatures = false;
-				list->SetColor( vsColor::Red );
+				list->SetColor( darkRed );
 			}
 			list->LineTo(m_verts[i]);
 		}
+		list->PopTransform(   );
+		
+		vsString timerString = vsFormatString("%d", (int)m_timer);
+		vsDisplayList *timerList = vsBuiltInFont::CreateString(timerString, 20.f, 20.f, Justification_Center);
+		t.m_position.Set(0.f,-40.f);
+		list->PushTransform(t);
+		list->Append(*timerList);
+		list->PopTransform();
+		delete timerList;
 	}
 }
 
@@ -107,6 +139,13 @@ daPetition::Spawn( const vsVector2D &pos )
 }
 
 void
+daPetition::Despawn()
+{
+	Extract();
+	m_state = Dead;
+}
+
+void
 daPetition::PickedUp()
 {
 	m_state = Inventory;
@@ -116,9 +155,14 @@ daPetition::PickedUp()
 void
 daPetition::HeldUp( vsSprite *player )
 {
-	m_player = player;
-	m_state = Held;	// don't register with the layer;  we're 
-					// going to be a child of the player, in this state.
+	if ( m_state != Held || m_player != player )
+	{
+		m_player = player;
+		m_state = Held;	// don't register with the layer;  we're 
+		// going to be a child of the player, in this state.
+		
+		m_timer = 10.0f;	// ten second activity, max
+	}
 }
 
 void
@@ -130,4 +174,14 @@ daPetition::Thrown(vsVector2D source, vsVector2D destination)
 	m_state = Dropping;
 }
 
+void
+daPetition::Sign()
+{
+	if ( m_signatures < m_maxSignatures )
+	{
+		m_signatures++;
+		
+		m_mode->AddSignature();
+	}
+}
 

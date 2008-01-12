@@ -72,6 +72,7 @@ daPlayer::HandlePetition()
 		vsVector2D destination = GetPosition();
 		
 		vsVector2D desiredDirection = input->GetLeftStick();
+		desiredDirection.y *= -1.0f;
 		if ( desiredDirection.SqMagnitude() > 1.0f )
 			desiredDirection.Normalise();
 		

@@ -15,6 +15,7 @@
 
 class colSprite : public vsSprite, public colResponder
 {
+	typedef vsSprite Parent;
 protected:
 	colObject *		m_colObject;
 public:

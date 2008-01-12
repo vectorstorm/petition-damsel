@@ -41,6 +41,8 @@ daModeInGame::Init()
 	m_player->SetColor(vsColor::Red);
 	m_player->RegisterOnLayer(0);
 	
+	m_timeLimit = 60.0f;
+	
 	for ( int i = 0; i < MAX_PEDESTRIANS; i++ )
 	{
 		m_pedestrian[i] = new daPedestrian(this);
@@ -56,7 +58,7 @@ daModeInGame::Init()
 	
 	for ( int i = 0; i < MAX_PETITIONS; i++ )
 	{
-		m_petition[i] = new daPetition(10);
+		m_petition[i] = new daPetition(this,10);
 		m_petition[i]->SetColor(vsColor::Yellow);
 	}
 	
@@ -99,8 +101,6 @@ daModeInGame::Deinit()
 void
 daModeInGame::Update( float timeStep )
 {
-	UNUSED(timeStep);
-	
 	vsVector2D playerPos = m_player->GetPosition();
 	// check for whether the player has moved over a petition pickup.
 	for ( int i = 0; i < MAX_PETITIONS; i++ )
@@ -143,6 +143,15 @@ daModeInGame::Update( float timeStep )
 
 	if ( m_game->GetInput()->WasPressed(CID_B) )
 		m_game->SetMode(daGame::Mode_TitleScreen);
+	
+	m_timeLimit -= timeStep;
+	if ( m_timeLimit < 0.f )
+	{
+		m_timeLimit = 0.f;
+		// do gameover sequence here
+		
+		m_game->SetMode(daGame::Mode_TitleScreen);
+	}
 	
 }
 
@@ -219,8 +228,8 @@ daModeInGame::FindAvailablePetition( const vsVector2D &where )
 	{
 		if ( m_petition[i]->AttractsPedestrians() )
 		{
-			vsTuneable float s_normalAttractDistance = 50.0f;
-			vsTuneable float s_activeAttractDistance = 200.0f;
+			vsTuneable float s_normalAttractDistance = 100.0f;
+			vsTuneable float s_activeAttractDistance = 300.0f;
 			
 			vsVector2D petitionPos = m_petition[i]->GetPositionInLevel();//m_petition[i]->GetPosition();
 			float effectiveAttractDistance = s_normalAttractDistance;			
@@ -283,6 +292,14 @@ daModeInGame::GetPetitionFromInventory()
 	}
 	
 	return NULL;
+}
+
+void
+daModeInGame::AddSignature()
+{
+	m_score++;
+	
+	m_timeLimit += 5.0f;
 }
 
 

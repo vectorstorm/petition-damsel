@@ -21,7 +21,9 @@ class daPedestrian: public daBasicPerson
 	
 	daModeInGame	*m_mode;
 	
-	daPetition *m_focusedPetition;
+	daPetition		*m_focusedPetition;
+	float			m_postSigningPetitionInterest;
+	bool			m_attemptedSigning;
 	
 	vsVector2D		m_exit;
 	
@@ -39,6 +41,9 @@ public:
 					daPedestrian( daModeInGame *mode );
 	virtual void	Update( float timeStep );
 	
+	virtual bool	CollisionCallback( const colEvent &collision );
+	virtual void	DestroyCallback();
+
 	bool			IsSpawned() { return m_spawned; }
 	void			Spawn(const vsVector2D &where_in, const vsVector2D &where_out, float radius_in, bool noOverlap);
 	void			Despawn();

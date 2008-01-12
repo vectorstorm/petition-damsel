@@ -18,12 +18,14 @@ class vsDisplayList;
 class daHud : public vsEntity
 {
 	daModeInGame *		m_gameMode;
+	vsDisplayList *		m_signatures;
+	vsDisplayList *		m_timeRemaining;
 	vsDisplayList *		m_scoreList;
-	vsDisplayList *		m_highScoreList;
+	vsDisplayList *		m_timeList;
 	vsDisplayList *		m_petitionList;
 	
 	int					m_score;		// this is the score that we've built into 'm_scoreList';  we don't need to rebuild that display list except when this value changes!
-	int					m_highScore;
+	int					m_seconds;
 	
 	float				m_opacity;
 	float				m_fadingFrom;
