@@ -1,16 +1,13 @@
 /*
- *  DA_Pedestrian.cpp
+ *  DA_Car.cpp
  *  Damsel
  *
- *  Created by Trevor Powell on 10/01/08.
+ *  Created by Trevor Powell on 12/01/08.
  *  Copyright 2008 PanicKitten Softworks. All rights reserved.
  *
  */
 
-#include "DA_Pedestrian.h"
-
-#include "DA_ModeInGame.h"
-#include "DA_Petition.h"
+#include "DA_Car.h"
 
 #include "Core.h"
 #include "CORE_Game.h"
@@ -22,35 +19,32 @@
 #include "VS_Random.h"
 #include "VS_Screen.h"
 
-daPedestrian::daPedestrian( daModeInGame *mode ):
-	daBasicPerson( false ),
-	m_mode(mode),
-	m_spawned(false),
-	m_homingOnTarget(false)
+daCar::daCar():
+physSprite( vsDisplayList::Load("Car.vec"), ColFlag_Shot, ColFlag_Shot ),
+m_spawned(false),
+m_homingOnTarget(false)
 {
 	colCircle circle;
 	circle.center = vsVector2D::Zero;
 	circle.radius = 15.0f;
 	m_colObject->SetBoundingCircle( circle );
+	
+	SetMass(5000.0f);	// huge mass!
 }
 
 void
-daPedestrian::Update(float timeStep)
+daCar::Update(float timeStep)
 {
-	UNUSED(timeStep);
-	
-	m_focusedPetition = m_mode->FindAvailablePetition( GetPosition() );
-	
 	if ( !m_homingOnTarget )
 		PickTarget();
 	else
 		GoToTarget();
-	 
+	
 	Parent::Update(timeStep);
 }
 
 void
-daPedestrian::PickTarget()
+daCar::PickTarget()
 {
 	// check where I'm going to, vs. where I am.
 	
@@ -75,19 +69,10 @@ daPedestrian::PickTarget()
 }
 
 void
-daPedestrian::GoToTarget()
+daCar::GoToTarget()
 {
 	vsVector2D delta = m_target - GetPosition();
 	vsVector2D deltaExit = m_exit - GetPosition();
-	
-	if ( m_focusedPetition )
-	{
-		vsVector2D petitionPosition = m_focusedPetition->GetPositionInLevel();
-		vsVector2D directionToPetition = petitionPosition - GetPosition();
-		
-		delta = directionToPetition;
-	}
-	
 	if ( deltaExit.Length() < 60.0f )
 	{
 		Despawn();
@@ -105,8 +90,8 @@ daPedestrian::GoToTarget()
 			delta *= (1.0f / 30.0f);
 		
 		vsVector2D desiredVelocity = delta;
-
-		vsTuneable float s_walkSpeed = 100.0f;
+		
+		vsTuneable float s_walkSpeed = 1000.0f;
 		desiredVelocity *= s_walkSpeed;
 		
 		// Let's compare my desired velocity against my actual velocity.
@@ -120,12 +105,12 @@ daPedestrian::GoToTarget()
 }
 
 void
-daPedestrian::WaitAtTarget()
+daCar::WaitAtTarget()
 {
 }
 
 void
-daPedestrian::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, float radius_in, bool noOverlap)
+daCar::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, float radius_in, bool noOverlap)
 {
 	vsAssert( !m_spawned, "Tried to spawn an asteroid that was already spawned!" );
 	
@@ -167,7 +152,7 @@ daPedestrian::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, flo
 }
 
 void
-daPedestrian::Despawn()
+daCar::Despawn()
 {
 	m_colObject->SetCollisionsActive(false);
 	Extract();

@@ -89,7 +89,7 @@ daModeTitleScreen::Init()
 	m_title->SetPosition(m_iniTitlePos);
 	m_title->SetColor(vsColor::Black);
 	
-	m_game->PlayMusic( daGame::Music_Title );
+	//m_game->PlayMusic( daGame::Music_Title );
 }
 
 void

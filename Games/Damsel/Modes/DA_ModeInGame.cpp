@@ -10,12 +10,13 @@
 #include "DA_ModeInGame.h"
 
 #include "DA_Camera.h"
+#include "DA_Car.h"
 #include "DA_Game.h"
 #include "DA_LevelBackground.h"
 #include "DA_Hud.h"
 #include "DA_Player.h"
 #include "DA_Pedestrian.h"
-#include "DA_PetitionPickup.h"
+#include "DA_Petition.h"
 #include "SYS_Input.h"
 
 #include "VS_Layer.h"
@@ -36,21 +37,27 @@ daModeInGame::~daModeInGame()
 void
 daModeInGame::Init()
 {
-	m_player = new daPlayer();
+	m_player = new daPlayer(this);
 	m_player->SetColor(vsColor::Red);
 	m_player->RegisterOnLayer(0);
 	
 	for ( int i = 0; i < MAX_PEDESTRIANS; i++ )
 	{
-		m_pedestrian[i] = new daPedestrian();
+		m_pedestrian[i] = new daPedestrian(this);
 		m_pedestrian[i]->SetColor(vsColor::Blue);
 		//m_pedestrian[i]->Spawn( vsVector2D::Zero, 600.0f, true);
 	}
 	
-	for ( int i = 0; i < MAX_PICKUPS; i++ )
+	for ( int i = 0; i < MAX_CARS; i++ )
 	{
-		m_pickup[i] = new daPetitionPickup(10);
-		m_pickup[i]->SetColor(vsColor::Yellow);
+		m_car[i] = new daCar;
+		m_car[i]->SetColor(vsColor::White);
+	}
+	
+	for ( int i = 0; i < MAX_PETITIONS; i++ )
+	{
+		m_petition[i] = new daPetition(10);
+		m_petition[i]->SetColor(vsColor::Yellow);
 	}
 	
 	m_hud = new daHud(this);
@@ -63,10 +70,10 @@ daModeInGame::Init()
 	//m_game->PlayMusic( daGame::Music_Title );
 
 	m_score = 0;
-	m_petitionsInHand = 2;
-	
-	m_petitionSpawnTimer = 20.0f;
+
+	m_petitionSpawnTimer = 0.0f;
 	m_pedestrianSpawnTimer = 2.0f;
+	m_carSpawnTimer = 5.0f;
 	
 	m_camera = new daCamera();
 	m_camera->FollowSprite( m_player );
@@ -85,7 +92,7 @@ daModeInGame::Deinit()
 	for ( int i = 0; i < MAX_PEDESTRIANS; i++ )
 		vsDelete( m_pedestrian[i] );
 	for ( int i = 0; i < MAX_PICKUPS; i++ )
-		vsDelete( m_pickup[i] );
+		vsDelete( m_petition[i] );
 	vsDelete( m_player );
 }
 
@@ -94,8 +101,21 @@ daModeInGame::Update( float timeStep )
 {
 	UNUSED(timeStep);
 	
-	if ( m_game->GetInput()->WasPressed(CID_B) )
-		m_game->SetMode(daGame::Mode_TitleScreen);
+	vsVector2D playerPos = m_player->GetPosition();
+	// check for whether the player has moved over a petition pickup.
+	for ( int i = 0; i < MAX_PETITIONS; i++ )
+	{
+		if ( m_petition[i]->AvailableForPickup() )
+		{
+			const float c_pickupDistance = 20.0f;
+			vsVector2D delta = playerPos - m_petition[i]->GetPosition();
+			if ( delta.Length() < c_pickupDistance )
+			{
+				m_petition[i]->PickedUp();
+			}
+		}
+	}
+	
 	
 	
 	m_petitionSpawnTimer -= timeStep;
@@ -112,6 +132,30 @@ daModeInGame::Update( float timeStep )
 		SpawnPedestrian();
 		//m_pedestrianSpawnTimer = 2000.0f;
 		m_pedestrianSpawnTimer = vsRandom::GetFloat(0.2f, 1.0f);
+	}
+	
+	m_carSpawnTimer -= timeStep;
+	if ( m_carSpawnTimer <= 0.f )
+	{
+		SpawnCar();
+		m_carSpawnTimer = vsRandom::GetFloat(3.0f, 8.0f);
+	}
+
+	if ( m_game->GetInput()->WasPressed(CID_B) )
+		m_game->SetMode(daGame::Mode_TitleScreen);
+	
+}
+
+void
+daModeInGame::SpawnCar()
+{
+	for ( int i = 0; i < MAX_CARS; i++ )
+	{
+		if ( !m_car[i]->IsSpawned() )
+		{
+			m_car[i]->Spawn( vsVector2D(-1600,75), vsVector2D(1600,75), 10.0f, true );
+			return;
+		}
 	}
 }
 
@@ -139,7 +183,7 @@ daModeInGame::SpawnPedestrian()
 	{
 		if ( !m_pedestrian[i]->IsSpawned() )
 		{
-			bool enterSide = (1 == vsRandom::GetInt(1));
+			bool enterSide = vsRandom::GetBool();
 			
 			if ( vsRandom::GetBool() )
 			{
@@ -164,32 +208,35 @@ daModeInGame::SpawnPedestrian()
 	}
 }
 
-daPetitionPickup *
+daPetition *
 daModeInGame::FindAvailablePetition( const vsVector2D &where )
 {
 	float bestAttraction = 1.0f;
-	daPetitionPickup *bestResult = NULL;
+	daPetition *bestResult = NULL;
 	
 	
 	for ( int i = 0; i < MAX_PICKUPS; i++ )
 	{
-		if ( m_pickup[i]->AttractsPedestrians() )
+		if ( m_petition[i]->AttractsPedestrians() )
 		{
 			vsTuneable float s_normalAttractDistance = 50.0f;
 			vsTuneable float s_activeAttractDistance = 200.0f;
 			
-			float effectiveAttractDistance = s_normalAttractDistance;
-			float distance = (m_pickup[i]->GetPosition() - where).Magnitude();
-			float attraction;
+			vsVector2D petitionPos = m_petition[i]->GetPositionInLevel();//m_petition[i]->GetPosition();
+			float effectiveAttractDistance = s_normalAttractDistance;			
 			
-			if ( m_pickup[i]->ActiveAttractsPedestrians() )
+			if ( m_petition[i]->ActiveAttractsPedestrians() )	// petition being held by the player.
+			{
 				effectiveAttractDistance = s_activeAttractDistance;
+//				petitionPos += m_player->GetPosition();
+			}
 			
-			attraction = distance / effectiveAttractDistance;
+			float distance = (petitionPos - where).Magnitude();
+			float attraction = distance / effectiveAttractDistance;
 			if ( attraction < bestAttraction )
 			{
 				bestAttraction = attraction;
-				bestResult = m_pickup[i];
+				bestResult = m_petition[i];
 			}
 		}
 	}
@@ -200,15 +247,42 @@ daModeInGame::FindAvailablePetition( const vsVector2D &where )
 void
 daModeInGame::AttemptToSpawnPetition()
 {
-	for ( int i = 0; i < MAX_PICKUPS; i++ )
+	for ( int i = 0; i < MAX_PETITIONS; i++ )
 	{
-		if ( m_pickup[i]->AvailableForSpawn() )
+		if ( m_petition[i]->AvailableForSpawn() )
 		{
 			vsLayer *l = vsScreen::Instance()->GetLayer(0);
 			
-			m_pickup[i]->Spawn( vsRandom::GetVector2D( l->GetTopLeftCorner(), l->GetBottomRightCorner() ) );
+			m_petition[i]->Spawn( vsRandom::GetVector2D( l->GetTopLeftCorner(), l->GetBottomRightCorner() ) );
 			return;
 		}
 	}
 }
+
+int
+daModeInGame::GetPetitionsInHand()
+{
+	int count = 0;
+	
+	for ( int i = 0; i < MAX_PETITIONS; i++ )
+	{
+		if ( m_petition[i]->InInventory() )
+			count++;
+	}
+	
+	return count;
+}
+
+daPetition *
+daModeInGame::GetPetitionFromInventory()
+{
+	for ( int i = 0; i < MAX_PETITIONS; i++ )
+	{
+		if ( m_petition[i]->InInventory() )
+			return m_petition[i];
+	}
+	
+	return NULL;
+}
+
 

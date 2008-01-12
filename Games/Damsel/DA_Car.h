@@ -1,27 +1,20 @@
 /*
- *  DA_Pedestrian.h
+ *  DA_Car.h
  *  Damsel
  *
- *  Created by Trevor Powell on 10/01/08.
+ *  Created by Trevor Powell on 12/01/08.
  *  Copyright 2008 PanicKitten Softworks. All rights reserved.
  *
  */
 
-#ifndef DA_PEDESTRIAN_H
-#define DA_PEDESTRIAN_H
+#ifndef DA_CAR_H
+#define DA_CAR_H
 
-#include "DA_BasicPerson.h"
+#include "PHYS_Sprite.h"
 
-class daModeInGame;
-class daPetition;
-
-class daPedestrian: public daBasicPerson
+class daCar : public physSprite
 {
-	typedef daBasicPerson Parent;
-	
-	daModeInGame	*m_mode;
-	
-	daPetition *m_focusedPetition;
+	typedef physSprite Parent;
 	
 	vsVector2D		m_exit;
 	
@@ -36,7 +29,7 @@ class daPedestrian: public daBasicPerson
 	
 public:
 	
-					daPedestrian( daModeInGame *mode );
+	daCar();
 	virtual void	Update( float timeStep );
 	
 	bool			IsSpawned() { return m_spawned; }
@@ -44,4 +37,4 @@ public:
 	void			Despawn();
 };
 
-#endif // DA_PEDESTRIAN_H
+#endif // DA_CAR_H

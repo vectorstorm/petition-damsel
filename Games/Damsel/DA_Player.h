@@ -14,17 +14,22 @@
 
 #define MAX_PICKUPS (5)
 
-class daPetitionPickup;
+class daModeInGame;
+class daPetition;
 
 class daPlayer : public daBasicPerson
 {
 	typedef daBasicPerson Parent;
 	
-	bool					m_petitionPickupUsed;
+	daModeInGame *		m_mode;
+	daPetition *	m_petitionHeld;
+	
+	void	HandlePetition();
+	void	AcquirePetition();
 
 public:
 	
-	daPlayer();
+	daPlayer( daModeInGame *mode );
 	
 	virtual void	Update(float timeStep);
 };

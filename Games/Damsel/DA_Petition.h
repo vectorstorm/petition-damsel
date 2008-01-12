@@ -1,5 +1,5 @@
 /*
- *  DA_PetitionPickup.h
+ *  DA_Petition.h
  *  Damsel
  *
  *  Created by Trevor Powell on 11/01/08.
@@ -7,40 +7,55 @@
  *
  */
 
-#ifndef DA_PETITIONPICKUP_H
-#define DA_PETITIONPICKUP_H
+#ifndef DA_PETITION_H
+#define DA_PETITION_H
 
 #include "VS_Sprite.h"
 
-class daPetitionPickup : public vsSprite
+class daPetition : public vsSprite
 {
 	enum State
 	{
 		Pickup,		// inert pickup;  waiting for player to grab me
 		Inventory,	// player has picked me up;  don't currently exist on the game board
 		Held,		// being held above player's head right now;  actively attracting people!
+		Dropping,	// been dropped by player;  passively attracting people
 		Dropped,	// been dropped by player;  passively attracting people
 		Dead		// Been used, not yet been respawned as a pickup.
 	};
+	
+	vsSprite *	m_player;
 	
 	vsVector2D	*m_verts;
 	
 	int			m_signatures;
 	int			m_maxSignatures;
 	
+	vsVector2D	m_dropDestination;
+	
 	State		m_state;
 	
 	virtual void _Draw( vsDisplayList *list );
 public:
-				daPetitionPickup(int maxSignatures);
-	virtual		~daPetitionPickup();
+				daPetition(int maxSignatures);
+	virtual		~daPetition();
+	
+	virtual void	Update( float timeStep );
+	
+	vsVector2D	GetPositionInLevel();
 	
 	bool		AttractsPedestrians() { return (m_state == Held || m_state == Dropped); }
 	bool		ActiveAttractsPedestrians() { return (m_state == Held); }
 	
 	bool		AvailableForSpawn() { return (m_state == Dead); }
+	bool		AvailableForPickup() { return (m_state == Pickup); }
+	bool		InInventory() { return (m_state == Inventory); }
 	
+	void		PickedUp();
+	void		HeldUp( vsSprite *player );
+	void		DroppedAt( vsVector2D pos );
+	void		Thrown( vsVector2D source, vsVector2D destination );
 	void		Spawn(const vsVector2D &where);
 };
 
-#endif // DA_PETITIONPICKUP_H
+#endif // DA_PETITION_H

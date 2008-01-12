@@ -1,0 +1,5 @@
+MoveTo -75 -25
+LineTo 75 -25
+LineTo 75 25
+LineTo -75 25
+LineTo -75 -25
