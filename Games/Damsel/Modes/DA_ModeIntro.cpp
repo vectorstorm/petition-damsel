@@ -215,9 +215,10 @@ daModeIntro::TransitionIn( float timeStep )
 			}
 			else if ( m_introTimer > c_startFadeTime )
 			{
+				vsTuneable float c_redFadeDuration = 1.5f;
 				frac = m_introTimer-c_startFadeTime;
-				if ( frac < 1.f )
-					c = vsInterpolate(frac, vsColor::Red, vsColor::Black);
+				if ( frac < c_redFadeDuration )
+					c = vsInterpolate(frac / c_redFadeDuration, vsColor::Red, vsColor::Black);
 				else
 				{
 					c = vsColor::Black;

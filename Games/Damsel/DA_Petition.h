@@ -13,6 +13,7 @@
 #include "VS_Sprite.h"
 
 class daModeInGame;
+class sndSample;
 
 class daPetition : public vsSprite
 {
@@ -29,10 +30,15 @@ class daPetition : public vsSprite
 	daModeInGame *	m_mode;
 	vsSprite *	m_player;
 	
+	sndSample *	m_beep;
+	sndSample *	m_explodeBeep;
+	
 	vsVector2D	*m_verts;
 	
 	int			m_signatures;
 	int			m_maxSignatures;
+	
+	int			m_beepedAt;
 	
 	float		m_timer;
 	bool		m_exploding;

@@ -15,6 +15,8 @@
 class daBasicPerson : public physSprite
 {
 	typedef physSprite Parent;
+	
+	bool		m_player;
 		
 #define LIMB_COUNT (2)	// swinging objects, synched to walk cycle
 		

@@ -34,7 +34,7 @@ m_fading(false)
 	
 	m_petitionList = vsDisplayList::Load("Petition.vec");
 	
-	m_signatures = vsBuiltInFont::CreateString("Signatures: ", 20.0f, 25.0f, Justification_Right);
+	m_signatures = vsBuiltInFont::CreateString("Political Points: ", 20.0f, 25.0f, Justification_Right);
 	m_timeRemaining = vsBuiltInFont::CreateString("Time left: ", 20.0f, 25.0f, Justification_Right);
 	
 	BuildScoreLists();
@@ -56,6 +56,9 @@ daHud::BuildScoreLists()
 {
 	int newScore = m_gameMode->GetScore();
 	int seconds = (int)m_gameMode->GetTimeLeft();
+	
+	if ( seconds < 0 )
+		seconds = 0;
 	
 	if ( !m_scoreList || newScore != m_score )
 	{
@@ -110,7 +113,7 @@ daHud::_Draw( vsDisplayList *list )
 	list->SetColor( vsColor::Blue * m_opacity );
 	if ( m_scoreList )
 	{
-		t.m_position.Set(-250.f, -440.f);
+		t.m_position.Set(-100.f, -440.f);
 		list->PushTransform(t);
 		list->Append(*m_signatures);
 		list->Append(*m_scoreList);

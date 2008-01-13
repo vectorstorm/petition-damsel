@@ -42,7 +42,7 @@ daModeTutorial::Init()
 	m_title->RegisterOnLayer(1);
 	m_title->SetColor(vsColor::White);
 	
-	m_back = new vsSprite(vsBuiltInFont::CreateString("Press <A> to return", 15.f, 20.f, Justification_Right));
+	m_back = new vsSprite(vsBuiltInFont::CreateString("Press <LEFT> or <RIGHT> to switch pages.  Press <A> to return", 15.f, 20.f, Justification_Right));
 	m_back->SetPosition( vsScreen::Instance()->GetLayer(1)->GetBottomRightCorner() + vsVector2D(-50.f,-50.f) );
 	m_back->SetColor(vsColor::Blue);
 	m_back->RegisterOnLayer(1);
@@ -55,28 +55,27 @@ daModeTutorial::Init()
 	m_player = new daPlayer(NULL);
 	m_player->SetPosition( vsVector2D(-0.0f, -250.0f) );
 	m_player->SetColor(vsColor::Red);
-	m_page[0]->AddChild(m_player);
+	m_page[1]->AddChild(m_player);
 
 	m_pedestrian = new daPedestrian(NULL);
 	m_pedestrian->SetPosition( vsVector2D(-0.0f, -250.0f) );
 	m_pedestrian->SetColor(vsColor::Blue);
-	m_page[1]->AddChild(m_pedestrian);
+	m_page[2]->AddChild(m_pedestrian);
 	
 	m_petition = new daPetition(NULL,10);
 	m_petition->SetPosition( vsVector2D(-0.0f, -250.0f) );
 	m_petition->SetColor(vsColor::Yellow);
-	m_page[2]->AddChild(m_petition);
+	m_page[3]->AddChild(m_petition);
 	
 	m_cop = new daCop(NULL);
 	m_cop->SetPosition( vsVector2D(-0.0f, -250.0f) );
 	m_cop->SetColor(vsColor(0.5f,0.0f,0.0f,1.0f));
-	m_page[3]->AddChild(m_cop);
+	m_page[4]->AddChild(m_cop);
 
 	m_car = new daCar(NULL);
 	m_car->SetPosition( vsVector2D(-0.0f, -250.0f) );
-	m_car->SetColor(vsColor::White);
 	m_car->SetAngle(vsAngle(DEGREES(90.0f)));
-	m_page[4]->AddChild(m_car);
+	m_page[0]->AddChild(m_car);
 	
 	
 	const int c_pageOneLines = 14;
@@ -95,41 +94,41 @@ daModeTutorial::Init()
 		"",
 		"",
 		"",
-		"<Page 1/5>"
+		"<Page 2/5>"
 	};
 	
 	vsString pageTwoLines[c_pageOneLines] = {
-		"This is a pedestrian. He would love to sign a",
-		"petition! Once a pedestrian has signed a petition", 
-		"he darkens and will not sign any more petitions.",
+		"This is a pedestrian. He would love to sign your",
+		"petition. After he signs your petition he will", 
+		"darken and will not sign any more petitions.",
 		"",
-		"But his tragic death would still be worth extra",
+		"But his tragic death could still be worth extra",
 		"political points.",
 		"",
-		"But that would be wrong.",
+		"I mean, just speaking theoretically.",
 		"",
+		"Because getting someone hurt would be wrong.",
 		"",
 		"Very, very wrong.",
 		"",
-		"",
-		"<Page 2/5>"
+		"<Page 3/5>"
 	};
 	
 	vsString pageThreeLines[c_pageOneLines] = {
 		"This is a petition. Search the level to find them!",
 		"",
 		"When you have one, hold the <A> button to hold it",
-		"over your head, and attract nearby pedestrians.",
-		"Release the <A> button to drop or throw it.  The",
-		"green part of the circle shows how many signatures",
-		"it has received.",
+		"over your head and attract nearby pedestrians.",
+		"Release the <A> button to drop or throw it on the",
+		"ground.  The green part of the circle shows how many", 
+		"signatures it has received.",
 		"",
 		"Pedestrians are more likely to notice and sign your",
-		"petitions if you hold the petition.  However, bad",
-		"things happen when petitions run out of time, so",
-		"don't hold on for too long!",
+		"petitions while you hold it.  However, bad things",
+		"tend to happen when petitions expire, so don't hold",
+		"on for too long!",
 		"",
-		"<Page 3/5>"
+		"<Page 4/5>"
 	};
 	
 	vsString pageFourLines[c_pageOneLines] = {
@@ -146,58 +145,71 @@ daModeTutorial::Init()
 		"",
 		"",
 		"",
-		"<Page 4/5>"
+		"<Page 5/5>"
 	};
 	
 	vsString pageFiveLines[c_pageOneLines] = {
 		"This is a car.",
 		"",
 		"These are very dangerous, and zoom along the highway",
-		"at reckless speeds.",
+		"at reckless speeds, hurting innocent pedestrians,",
+		"destroying the environment, and being a general",
+		"nuisance.",  
 		"",
-		"Someone should do something about them.",  
-		"",
+		"Someone should do something about them.",
 		"",
 		"And that someone is you.",
 		"",
+		"(press RIGHT to advance to the next page)",
 		"",
-		"",
-		"",
-		"<Page 5/5>"
+		"<Page 1/5>"
 	};
+	
+	const float c_size = 20.0f;
+	const float c_capSize = 30.0f;
 	
 	for ( int i = 0; i < c_pageOneLines; i++ )
 	{
-		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageOneLines[i], 20.0f, 25.0f, Justification_Center));
+		vsSprite *text;
+		if ( pageFiveLines[i][0] == '(' )
+		{
+			text = new vsSprite(vsBuiltInFont::CreateString(pageFiveLines[i], 15.f, 20.f, Justification_Center));
+			text->SetColor(vsColor::Blue);
+		}
+		else
+		{
+			text = new vsSprite(vsBuiltInFont::CreateString(pageFiveLines[i], c_size, c_capSize, Justification_Center));
+			text->SetColor(vsColor::LightBlue);
+		}
 		text->SetPosition( vsVector2D(0.0f, -140.0f + (40.0f * i)) );
-		text->SetColor(vsColor::LightBlue);
 		m_page[0]->AddChild(text);
 	}
 
 	for ( int i = 0; i < c_pageOneLines; i++ )
 	{
-		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageTwoLines[i], 20.0f, 25.0f, Justification_Center));
+		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageOneLines[i], c_size, c_capSize, Justification_Center));
 		text->SetPosition( vsVector2D(0.0f, -140.0f + (40.0f * i)) );
 		text->SetColor(vsColor::LightBlue);
 		m_page[1]->AddChild(text);
 	}
+
 	for ( int i = 0; i < c_pageOneLines; i++ )
 	{
-		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageThreeLines[i], 20.0f, 25.0f, Justification_Center));
+		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageTwoLines[i], c_size, c_capSize, Justification_Center));
 		text->SetPosition( vsVector2D(0.0f, -140.0f + (40.0f * i)) );
 		text->SetColor(vsColor::LightBlue);
 		m_page[2]->AddChild(text);
 	}
 	for ( int i = 0; i < c_pageOneLines; i++ )
 	{
-		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageFourLines[i], 20.0f, 25.0f, Justification_Center));
+		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageThreeLines[i], c_size, c_capSize, Justification_Center));
 		text->SetPosition( vsVector2D(0.0f, -140.0f + (40.0f * i)) );
 		text->SetColor(vsColor::LightBlue);
 		m_page[3]->AddChild(text);
 	}
 	for ( int i = 0; i < c_pageOneLines; i++ )
 	{
-		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageFiveLines[i], 20.0f, 25.0f, Justification_Center));
+		vsSprite *text = new vsSprite(vsBuiltInFont::CreateString(pageFourLines[i], c_size, c_capSize, Justification_Center));
 		text->SetPosition( vsVector2D(0.0f, -140.0f + (40.0f * i)) );
 		text->SetColor(vsColor::LightBlue);
 		m_page[4]->AddChild(text);
@@ -208,6 +220,10 @@ daModeTutorial::Init()
 	m_transitioningIn = true;
 	m_transitioningOut = false;
 	m_transitionTimer = 0.f;
+	
+	m_game->PlayMusic(daGame::Music_Quote);
+	
+	Update(0.0f);
 }
 
 void
@@ -270,6 +286,7 @@ daModeTutorial::Update( float timeStep )
 	vsTuneable vsVector2D c_offscreenPos(-2000.0f,0.0f);
 	m_page[m_currentPage]->SetPosition( vsInterpolate(f, c_offscreenPos, vsVector2D::Zero) );
 	m_title->SetColor( vsInterpolate( f, vsColor::Black, vsColor::White ) );
+	m_back->SetColor( vsInterpolate( f, vsColor::Black, vsColor::Blue ) );
 }
 
 void

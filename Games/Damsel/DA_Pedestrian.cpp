@@ -50,7 +50,6 @@ daPedestrian::Update(float timeStep)
 			if ( m_postSigningPetitionInterest < 0.f )
 			{
 				m_focusedPetition = NULL;
-				SetColor( vsColor(0.0f,0.0f,0.5f,1.0f) );
 			}
 		}
 	}
@@ -116,6 +115,7 @@ daPedestrian::GoToTarget()
 			if ( !m_attemptedSigning )
 			{
 				m_focusedPetition->Sign();
+				SetColor( vsColor(0.0f,0.0f,0.5f,1.0f) );
 				m_attemptedSigning = true;
 				m_postSigningPetitionInterest = 3.0f;	// interested for three seconds after signing, then wander off.
 			}

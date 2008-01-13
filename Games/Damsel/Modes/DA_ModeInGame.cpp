@@ -21,8 +21,10 @@
 #include "DA_Splat.h"
 #include "SYS_Input.h"
 
+#include "VS_Font.h"
 #include "VS_Layer.h"
 #include "VS_Screen.h"
+#include "VS_Sprite.h"
 #include "VS_Random.h"
 
 daModeInGame::daModeInGame( daGame *game ):
@@ -43,6 +45,9 @@ daModeInGame::Init()
 	m_player->SetColor(vsColor::Red);
 	m_player->RegisterOnLayer(0);
 	m_respawnTimer = 5.0f;
+	m_gameOver = false;
+	m_gameOverTimer = 0.f;
+	m_gameOverSprite = new vsSprite(vsBuiltInFont::CreateString("Game Over", 55.f, 65.f, Justification_Center));
 	
 	m_timeLimit = 60.0f;
 	
@@ -67,7 +72,6 @@ daModeInGame::Init()
 	for ( int i = 0; i < MAX_CARS; i++ )
 	{
 		m_car[i] = new daCar(this);
-		m_car[i]->SetColor(vsColor::White);
 	}
 	
 	for ( int i = 0; i < MAX_PETITIONS; i++ )
@@ -82,6 +86,7 @@ daModeInGame::Init()
 	
 	m_background = new daLevelBackground;
 	m_background->RegisterOnLayer(0);
+	m_background->FadeIn();
 	
 	//m_game->PlayMusic( daGame::Music_Title );
 
@@ -94,8 +99,6 @@ daModeInGame::Init()
 	m_camera = new daCamera();
 	m_camera->FollowSprite( m_player );
 	vsScreen::Instance()->GetLayer(0)->SetCamera(m_camera);
-	
-	Splat(vsVector2D::Zero);
 }
 
 void
@@ -107,6 +110,14 @@ daModeInGame::Deinit()
 	vsDelete(m_background);
 	vsDelete(m_hud);
 	
+	vsDelete(m_gameOverSprite);
+	
+	for ( int i = 0; i < MAX_SPLATS; i++ )
+		vsDelete( m_splat[i] );
+	for ( int i = 0; i < MAX_COPS; i++ )
+		vsDelete( m_cop[i] );
+	for ( int i = 0; i < MAX_CARS; i++ )
+		vsDelete( m_car[i] );
 	for ( int i = 0; i < MAX_PEDESTRIANS; i++ )
 		vsDelete( m_pedestrian[i] );
 	for ( int i = 0; i < MAX_PICKUPS; i++ )
@@ -135,7 +146,7 @@ daModeInGame::Update( float timeStep )
 	
 	
 	m_petitionSpawnTimer -= timeStep;
-	if ( m_petitionSpawnTimer <= 0.f )
+	if ( !m_gameOver && m_petitionSpawnTimer <= 0.f )
 	{
 		AttemptToSpawnPetition();
 		
@@ -156,26 +167,51 @@ daModeInGame::Update( float timeStep )
 		SpawnCar();
 		m_carSpawnTimer = vsRandom::GetFloat(2.0f, 3.0f);
 	}
-	if ( !m_player->IsSpawned() )
+	if ( !m_gameOver && !m_player->IsSpawned() )
 	{
+		for ( int i = 0; i < MAX_PETITIONS; i++ )
+			if ( m_petition[i]->InInventory() )
+				m_petition[i]->Despawn();
+			
 		m_respawnTimer -= timeStep;
 		
 		if ( m_respawnTimer <= 0.f && m_player->TryRespawn() )
+		{
 			m_respawnTimer = 5.0f;
+			
+		}
 	}
 	
-	if ( m_game->GetInput()->WasPressed(CID_B) )
-		m_game->SetMode(daGame::Mode_TitleScreen);
-	
 	m_timeLimit -= timeStep;
-	if ( m_timeLimit < 0.f )
+	if ( !m_gameOver && m_timeLimit < 0.f )
 	{
 		m_timeLimit = 0.f;
 		// do gameover sequence here
-		
-		m_game->SetMode(daGame::Mode_TitleScreen);
+		m_gameOver = true;
+		m_gameOverTimer = 0.f;
+		m_gameOverSprite->RegisterOnLayer(1);
+		m_gameOverSprite->SetColor(vsColor::Black);
+		m_background->FadeOut();
 	}
 	
+	if ( m_gameOver )
+	{
+		if ( m_player->IsSpawned() )
+			m_player->Die();
+		
+		m_gameOverTimer += timeStep;
+		
+		float f = 1.f;
+		if ( m_gameOverTimer <= 2.0f )
+			f = m_gameOverTimer * 0.5f;
+		else if ( m_gameOverTimer >= 4.0f )
+			f = 1.0f - ((m_gameOverTimer - 4.0f) * 0.5f);
+
+		m_gameOverSprite->SetColor(vsInterpolate(f, vsColor::Black, vsColor::Red));
+		
+		if ( m_gameOverTimer >= 6.0f )
+			m_game->SetMode(daGame::Mode_TitleScreen);
+	}
 }
 
 void

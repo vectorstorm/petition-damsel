@@ -10,10 +10,13 @@
 #include "DA_ModeTitleScreen.h"
 
 #include "DA_Game.h"
+#include "DA_LevelBackground.h"
 
 #include "Core.h"
 
 #include "UT_Menu.h"
+
+#include "SND_Sample.h"
 
 #include "VS_Font.h"
 #include "VS_Layer.h"
@@ -37,12 +40,25 @@ static const float c_transitionDuration = 1.0f;
 daModeTitleScreen::daModeTitleScreen( daGame *game ):
 m_game(game)
 {
+}
+
+daModeTitleScreen::~daModeTitleScreen()
+{
+}
+
+void
+daModeTitleScreen::Init()
+{
+	m_menuItemSelected = 0;
+	
 	m_menu = new utMenu( MENU_MAX, 25.0f, 35.0f, 20.0f );
 	m_menu->SetItemLabel(NewGame, "New Game");
 	m_menu->SetItemLabel(HowToPlay, "How To Play");
 	m_menu->SetItemLabel(Options, "Options");
 	m_menu->SetItemLabel(Credits, "Credits");
 	m_menu->SetItemLabel(Quit, "Quit");
+	
+	m_menuThump = new sndSample("thump_4.wav");
 	
 	m_title = new vsSprite( NULL );
 	
@@ -57,17 +73,11 @@ m_game(game)
 	m_title->AddChild(timed);
 	m_title->AddChild(petition);
 	m_title->AddChild(damsel);
-}
 
-daModeTitleScreen::~daModeTitleScreen()
-{
-	delete m_title;
-	delete m_menu;
-}
-
-void
-daModeTitleScreen::Init()
-{
+	m_background = new daLevelBackground;
+	m_background->RegisterOnLayer(0);
+	m_background->FadeIn();
+	
 	m_title->RegisterOnLayer(1);
 	
 	m_menu->Enter();
@@ -100,12 +110,24 @@ daModeTitleScreen::Deinit()
 	
 	m_transitioningIn = false;
 	m_transitioningOut = false;
+	
+	vsDelete( m_menuThump );
+	
+	vsDelete( m_background );
+	vsDelete( m_title );
+	vsDelete( m_menu );
 }
 
 void
 daModeTitleScreen::Update( float timeStep )
 {
 	UNUSED(timeStep);
+	
+	if ( m_menu->GetHilitedItem() != m_menuItemSelected )
+	{
+		m_menuItemSelected = m_menu->GetHilitedItem();
+		m_menuThump->Play();
+	}
 	
 	if ( m_transitioningIn || m_transitioningOut )
 	{
@@ -155,26 +177,22 @@ daModeTitleScreen::Update( float timeStep )
 				switch( a.menuItemId )
 				{
 					case NewGame:
-						m_transitioningOut = true;
-						m_transitionTimer = 0.f;
+						StartTransitionOut();
 						m_transitioningOutTo = NewGame;
 						break;
 					case HowToPlay:
-						m_transitioningOut = true;
-						m_transitionTimer = 0.f;
+						StartTransitionOut();
 						m_transitioningOutTo = HowToPlay;
 						//m_game->GetHowToPlayScreen()->Show(true);
 						m_game->FadeOutMusic(c_transitionDuration);
 						break;
 					case Options:
-						m_transitioningOut = true;
-						m_transitionTimer = 0.f;
+						StartTransitionOut();
 						m_transitioningOutTo = Options;
 						m_game->FadeOutMusic(c_transitionDuration);
 						break;
 					case Credits:
-						m_transitioningOut = true;
-						m_transitionTimer = 0.f;
+						StartTransitionOut();
 						m_transitioningOutTo = Credits;
 						m_game->FadeOutMusic(c_transitionDuration);
 						break;
@@ -189,4 +207,11 @@ daModeTitleScreen::Update( float timeStep )
 	}
 }
 
+void
+daModeTitleScreen::StartTransitionOut()
+{
+	m_transitioningOut = true;
+	m_transitionTimer = 0.f;
+	m_background->FadeOut();
+}
 

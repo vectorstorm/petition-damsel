@@ -1,5 +1,42 @@
+#Main Body
 MoveTo -25 -75
 LineTo 25 -75
 LineTo 25 75
 LineTo -25 75
 LineTo -25 -75
+#Windshield
+MoveTo -25 -20
+LineTo 25 -20
+LineTo 15 -30
+LineTo -15 -30
+LineTo -25 -20
+#Bonnet
+MoveTo 0 -40
+LineTo 0 -65
+#Rear window
+MoveTo -15 75
+LineTo -15 40
+LineTo -25 30
+LineTo 25 30
+LineTo 15 40
+LineTo 15 75
+#Wheel LeftFront
+MoveTo -25 -30
+LineTo -30 -30
+LineTo -30 -50
+LineTo -25 -50
+#Wheel RightFront
+MoveTo 25 -30
+LineTo 30 -30
+LineTo 30 -50
+LineTo 25 -50
+#Wheel LeftRear
+MoveTo -25 30
+LineTo -30 30
+LineTo -30 50
+LineTo -25 50
+#Wheel RightFront
+MoveTo 25 30
+LineTo 30 30
+LineTo 30 50
+LineTo 25 50

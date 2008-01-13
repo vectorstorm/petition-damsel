@@ -47,6 +47,8 @@ int lookup_letterIndex( char letter )
 		case ',' : return 51;
 		case '"' : return 52;
 		case ';' : return 53;	// actually back-quotes.  Hope I never need to use a semicolon!
+		case '?' : return 54;
+		case '\'' : return 55;
 		default:  return -1;
 	}		
 }
@@ -74,7 +76,7 @@ vsVector2D P [24] = {
 	
 };
 // Vector strokes (indexed into P).
-static int st_nick53[54][15] = {
+static int st_nick53[56][15] = {
 	/* A */ { 13,4,2,6,15,0,10,6,-1 },
 	/* B */ { 13,1,2,6,8,12,14,13,-1 },
 	/* C */ { 12,14,10,4,2,6,-1 },
@@ -131,6 +133,8 @@ static int st_nick53[54][15] = {
 	/* , */ { 11,13,20,11,-1 },
 	/* " */ { 1,2,5,1,0,2,3,6,2,-1 },
 	/* ; */ { 1,2,4,1,0,2,3,5,2,-1 },
+	/* ? */ { 4,2,6,8,0,11,13,14,11,-1 },
+	/* ' */ { 1, 2, 4, 1, -1 }
 	///* @ */ { 12,5,11,6,2,4,10,14,15,-1 }
 	///* @ */ { 12,5,11,12,9,2,4,10,14,15,-1 }
 };

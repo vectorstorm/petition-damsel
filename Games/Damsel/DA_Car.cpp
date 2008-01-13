@@ -31,6 +31,8 @@ m_spawned(false)
 	circle.radius = 15.0f;
 	m_colObject->SetBoundingCircle( circle );
 	
+	SetColor(vsColor(0.5f,0.0f,0.5f,1.0f));
+	
 	SetMass(5000.0f);	// huge mass!
 }
 

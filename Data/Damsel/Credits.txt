@@ -23,6 +23,31 @@ Attribution-NonCommercial-ShareAlike 1.0 license.
 -- Sound Effects --
 
 
+3beeps1000.wav
+Copyright 2006 by Acclivity
+http://freesound.iua.upf.edu/samplesViewSingle.php?id=25881
+
+Licensed under the Creative Commons 
+Sampling Plus 1.0 license.
+
+
+Beep_b.wav
+Copyright 2007 by Jobro
+http://freesound.iua.upf.edu/samplesViewSingle.php?id=33776
+
+Licensed under the Creative Commons 
+Sampling Plus 1.0 license.
+
+
+Thump_4.wav
+Copyright 2005 by TicTacShutUp
+http://freesound.iua.upf.edu/samplesViewSingle.php?id=412
+
+Licensed under the Creative Commons 
+Sampling Plus 1.0 license.
+
+
+
 
 
 -- Other Data --

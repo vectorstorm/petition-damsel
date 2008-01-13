@@ -14,11 +14,22 @@
 
 class daLevelBackground : public vsSprite
 {
-	vsDisplayList *m_grassDisplayList;
+#define MAX_GRASS (10)
+	vsSprite *		m_grass[MAX_GRASS];
+	vsSprite *		m_roadMarkings;
+	
+	float			m_fadeTimer;
+	float			m_fadeTime;		// over how long are we supposed to fade?
+	bool			m_fadingIn;
 public:
 	
 					daLevelBackground();
 	virtual			~daLevelBackground();
+	
+	virtual void	Update(float timeStep);
+	
+	void			FadeIn(float fadeTime = 1.0f);
+	void			FadeOut(float fadeTime = 1.0f);
 	
 };
 

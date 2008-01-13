@@ -24,6 +24,7 @@ class daPedestrian;
 class daPetition;
 class daSplat;
 class daHud;
+class vsSprite;
 
 #define MAX_PEDESTRIANS (50)
 #define MAX_CARS		(10)
@@ -44,9 +45,13 @@ class daModeInGame : public coreGameMode
 	int						m_nextSplat;
 
 	daPetition *			m_petition[MAX_PETITIONS];
-
+	
 	daLevelBackground *		m_background;
 	daHud *					m_hud;
+	
+	vsSprite *				m_gameOverSprite;
+	bool					m_gameOver;
+	float					m_gameOverTimer;
 	
 	int						m_score;
 	int						m_highScore;

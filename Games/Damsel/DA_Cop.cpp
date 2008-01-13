@@ -99,10 +99,10 @@ daCop::GoToTarget()
 		for ( int i = 0; i < 4; i++ )
 			exits[i] = GetPosition();
 		
-		exits[0].x = -1600.0f;
-		exits[1].x = 1600.0f;
-		exits[2].y = -800.0f;
-		exits[3].y = 800.0f;
+		exits[0].x = -3200.0f;
+		exits[1].x = 3200.0f;
+		exits[2].y = -1600.0f;
+		exits[3].y = 1600.0f;
 		
 		int nearest = 0;
 		float nearestDist = 100000.0f;
@@ -138,16 +138,12 @@ daCop::GoToTarget()
 	if ( m_homingOnPlayer && delta.Length() < 60.0f )
 	{
 		m_mode->GetPlayer()->Die();
-		Despawn();
+		m_homingOnPlayer = false;
+		m_exitting = true;
 	}
-	else if ( delta.Length() < 50.0f )
+	else if ( m_exitting && delta.Length() < 200.0f )
 	{
-		if ( m_focusedPetition )
-		{
-			m_homingOnPlayer = true;
-		}
-		else
-			m_homingOnTarget = false;
+		Despawn();
 	}
 	else
 	{
@@ -159,7 +155,7 @@ daCop::GoToTarget()
 		
 		vsVector2D desiredVelocity = delta;
 		
-		vsTuneable float s_walkSpeed = 100.0f;
+		vsTuneable float s_walkSpeed = 300.0f;
 		desiredVelocity *= s_walkSpeed;
 		
 		// Let's compare my desired velocity against my actual velocity.
@@ -167,7 +163,7 @@ daCop::GoToTarget()
 		
 		vsVector2D deltaVelocity = desiredVelocity - actualVelocity;
 		
-		vsTuneable float s_accelAmount = 5.0f;
+		vsTuneable float s_accelAmount = 2.0f;
 		AddForce( deltaVelocity * s_accelAmount );
 	}
 }
@@ -249,5 +245,7 @@ daCop::CollisionCallback( const colEvent &collision )
 void
 daCop::DestroyCallback()
 {
+	m_mode->SpawnCop( GetPosition() );		// also some law enforcement.
+	m_mode->Splat( GetPosition() );
 	Despawn();
 }

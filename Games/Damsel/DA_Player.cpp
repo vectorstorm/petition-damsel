@@ -24,6 +24,7 @@ daPlayer::daPlayer( daModeInGame *mode ):
 	m_mode(mode),
 	m_petitionHeld(NULL)
 {
+	m_spawned = true;
 	SetCollisionsActive(true);
 }
 
@@ -122,6 +123,14 @@ daPlayer::DestroyCallback()
 void
 daPlayer::Die()
 {
+	if ( m_petitionHeld )
+	{
+		vsVector2D source = GetPosition() + vsVector2D(0.f,s_petitionHeldOffset);
+		RemoveChild(m_petitionHeld);
+		m_petitionHeld->Thrown( source, GetPosition() );
+		m_petitionHeld = NULL;
+	}
+	
 	m_mode->Splat( GetPosition() );
 	m_spawned = false;
 	Extract();

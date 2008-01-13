@@ -10,6 +10,8 @@
 #include "DA_Petition.h"
 #include "DA_ModeInGame.h"
 
+#include "SND_Sample.h"
+
 #include "VS_DisplayList.h"
 #include "VS_Font.h"
 #include "VS_Transform.h"
@@ -41,10 +43,15 @@ daPetition::daPetition(daModeInGame *mode, int maxSignatures):
 	
 	if ( !m_mode )
 		m_signatures = 3;
+	
+	m_beep = new sndSample("beep_b.wav");
+	m_explodeBeep = new sndSample("3beeps1000.wav");
 }
 
 daPetition::~daPetition()
 {
+	vsDelete( m_explodeBeep );
+	vsDelete( m_beep );
 	vsDeleteArray(m_verts);
 }
 
@@ -82,14 +89,23 @@ daPetition::Update( float timeStep )
 	{
 		m_timer -= timeStep;
 		
+		
 		if ( m_timer < 0.0f )
 		{
 			m_exploding = true;
 			m_explodeTimer = 3.0f;
 			m_pulseTimer = 0.f;
+			m_explodeBeep->Play();
 			
 			m_mode->SpawnMadCar( GetPositionInLevel() );
 		}
+		else if ( (int)m_timer < m_beepedAt )
+		{
+			m_beepedAt = (int)m_timer;
+			
+			m_beep->Play();
+		}
+		
 	}
 }
 
@@ -177,7 +193,7 @@ void
 daPetition::Despawn()
 {
 	if ( m_maxSignatures == m_signatures )
-		m_mode->AddTimeLeft(10.0f);
+		m_mode->AddTimeLeft(5.0f);
 	if ( m_parent )
 		m_parent->RemoveChild(this);
 	Extract();
@@ -201,6 +217,7 @@ daPetition::HeldUp( vsSprite *player )
 		// going to be a child of the player, in this state.
 		
 		m_timer = 10.0f;	// ten second activity, max
+		m_beepedAt = 9;
 	}
 }
 
@@ -221,7 +238,7 @@ daPetition::Sign()
 		m_signatures++;
 		
 		m_mode->AddSignature();
-		m_mode->AddTimeLeft(4.0f);
+		m_mode->AddTimeLeft(1.0f);
 	}
 }
 
