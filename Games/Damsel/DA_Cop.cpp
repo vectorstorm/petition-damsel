@@ -1,16 +1,17 @@
 /*
- *  DA_Pedestrian.cpp
+ *  DA_Cop.cpp
  *  Damsel
  *
- *  Created by Trevor Powell on 10/01/08.
+ *  Created by Trevor Powell on 13/01/08.
  *  Copyright 2008 PanicKitten Softworks. All rights reserved.
  *
  */
 
-#include "DA_Pedestrian.h"
+#include "DA_Cop.h"
 
 #include "DA_ModeInGame.h"
 #include "DA_Petition.h"
+#include "DA_Player.h"
 
 #include "Core.h"
 #include "CORE_Game.h"
@@ -22,12 +23,12 @@
 #include "VS_Random.h"
 #include "VS_Screen.h"
 
-daPedestrian::daPedestrian( daModeInGame *mode ):
-	daBasicPerson( false ),
-	m_mode(mode),
-	m_spawned(false),
-	m_homingOnTarget(false),
-	m_focusedPetition(NULL)
+daCop::daCop( daModeInGame *mode ):
+daBasicPerson( false ),
+m_mode(mode),
+m_spawned(false),
+m_homingOnTarget(false),
+m_focusedPetition(NULL)
 {
 	colCircle circle;
 	circle.center = vsVector2D::Zero;
@@ -36,25 +37,17 @@ daPedestrian::daPedestrian( daModeInGame *mode ):
 }
 
 void
-daPedestrian::Update(float timeStep)
+daCop::Update(float timeStep)
 {
 	if ( !m_mode ) return;
 
 	if ( m_focusedPetition )
 	{
+		m_exitting = false;
 		if ( !m_focusedPetition->AttractsPedestrians() )
 			m_focusedPetition = NULL;
-		else if ( m_attemptedSigning )
-		{
-			m_postSigningPetitionInterest -= timeStep;
-			if ( m_postSigningPetitionInterest < 0.f )
-			{
-				m_focusedPetition = NULL;
-				SetColor( vsColor(0.0f,0.0f,0.5f,1.0f) );
-			}
-		}
 	}
-
+	
 	if ( !m_attemptedSigning && !m_focusedPetition )
 		m_focusedPetition = m_mode->FindAvailablePetition( GetPosition() );
 	
@@ -62,12 +55,12 @@ daPedestrian::Update(float timeStep)
 		PickTarget();
 	else
 		GoToTarget();
-	 
+	
 	Parent::Update(timeStep);
 }
 
 void
-daPedestrian::PickTarget()
+daCop::PickTarget()
 {
 	// check where I'm going to, vs. where I am.
 	
@@ -92,12 +85,49 @@ daPedestrian::PickTarget()
 }
 
 void
-daPedestrian::GoToTarget()
+daCop::GoToTarget()
 {
 	vsVector2D delta = m_target - GetPosition();
 	vsVector2D deltaExit = m_exit - GetPosition();
 	
-	if ( m_focusedPetition )
+	if ( m_exitting )
+	{
+		// make straight for nearest edge of screen.
+		
+		vsVector2D exits[4];
+		
+		for ( int i = 0; i < 4; i++ )
+			exits[i] = GetPosition();
+		
+		exits[0].x = -1600.0f;
+		exits[1].x = 1600.0f;
+		exits[2].y = -800.0f;
+		exits[3].y = 800.0f;
+		
+		int nearest = 0;
+		float nearestDist = 100000.0f;
+		
+		for ( int i = 0; i < 4; i++ )
+		{
+			float dist = (exits[i] - GetPosition()).Length();
+			
+			if ( dist < nearestDist )
+			{
+				nearestDist = dist;
+				nearest = i;
+			}
+		}
+		
+		delta = exits[nearest] - GetPosition();
+	}
+	else if ( m_homingOnPlayer )
+	{
+		if ( !m_mode->GetPlayer()->IsSpawned() )
+			m_exitting = true;
+		else
+			delta = m_mode->GetPlayer()->GetPosition() - GetPosition();
+	}
+	else if ( m_focusedPetition )
 	{
 		vsVector2D petitionPosition = m_focusedPetition->GetPositionInLevel();
 		vsVector2D directionToPetition = petitionPosition - GetPosition();
@@ -105,20 +135,16 @@ daPedestrian::GoToTarget()
 		delta = directionToPetition;
 	}
 	
-	if ( deltaExit.Length() < 60.0f )
+	if ( m_homingOnPlayer && delta.Length() < 60.0f )
 	{
+		m_mode->GetPlayer()->Die();
 		Despawn();
 	}
 	else if ( delta.Length() < 50.0f )
 	{
 		if ( m_focusedPetition )
 		{
-			if ( !m_attemptedSigning )
-			{
-				m_focusedPetition->Sign();
-				m_attemptedSigning = true;
-				m_postSigningPetitionInterest = 3.0f;	// interested for three seconds after signing, then wander off.
-			}
+			m_homingOnPlayer = true;
 		}
 		else
 			m_homingOnTarget = false;
@@ -132,7 +158,7 @@ daPedestrian::GoToTarget()
 			delta *= (1.0f / 30.0f);
 		
 		vsVector2D desiredVelocity = delta;
-
+		
 		vsTuneable float s_walkSpeed = 100.0f;
 		desiredVelocity *= s_walkSpeed;
 		
@@ -147,12 +173,12 @@ daPedestrian::GoToTarget()
 }
 
 void
-daPedestrian::WaitAtTarget()
+daCop::WaitAtTarget()
 {
 }
 
 void
-daPedestrian::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, float radius_in, bool noOverlap)
+daCop::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, float radius_in, bool noOverlap)
 {
 	vsAssert( !m_spawned, "Tried to spawn an asteroid that was already spawned!" );
 	
@@ -173,7 +199,7 @@ daPedestrian::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, flo
 		if ( !noOverlap || tries++ > 10 ||
 			!core::GetGame()->GetCollision()->CollisionTest( where, nextPos, radius, m_colObject->GetTestFlags() ) )
 		{
-			SetColor( vsColor::Blue );
+			SetColor( vsColor(1.0f, 0.5f, 0.5f, 1.0f) );
 			SetPosition(where);
 			m_exit = where_out;
 			
@@ -189,15 +215,17 @@ daPedestrian::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, flo
 			RegisterOnLayer(0);
 			
 			m_spawned = true;
-			m_homingOnTarget = false;
+			m_homingOnTarget = true;
+			m_homingOnPlayer = true;
 			m_focusedPetition = NULL;
 			m_attemptedSigning = false;
+			m_exitting = false;
 		}
 	}
 }
 
 void
-daPedestrian::Despawn()
+daCop::Despawn()
 {
 	m_colObject->SetCollisionsActive(false);
 	Extract();
@@ -206,12 +234,12 @@ daPedestrian::Despawn()
 
 
 bool
-daPedestrian::CollisionCallback( const colEvent &collision )
+daCop::CollisionCallback( const colEvent &collision )
 {
 	if ( collision.colFlags & ColFlag_Shot )
 	{
 		SetDestroyed();
-
+		
 		return true;
 	}
 	
@@ -219,13 +247,7 @@ daPedestrian::CollisionCallback( const colEvent &collision )
 }
 
 void
-daPedestrian::DestroyCallback()
+daCop::DestroyCallback()
 {
-	m_mode->AddSignature();	// a dead pedestrian is good for two signatures worth of media coverage!
-	m_mode->AddSignature();
-	
-	m_mode->SpawnCop( GetPosition() );		// also some law enforcement.
-	
-	m_mode->Splat( GetPosition() );
 	Despawn();
 }

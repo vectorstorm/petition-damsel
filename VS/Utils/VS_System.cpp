@@ -179,7 +179,9 @@ vsSystemPreferences::CheckResolutions()
 	vsLog("Checking supported resolutions...\n");
 	
 	SDL_Rect **modes;
-	int i;
+	int modeCount;
+	int maxWidth = 0;
+	int maxHeight = 0;
 	/* Get available fullscreen/hardware modes */
 	modes=SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
 	
@@ -198,21 +200,52 @@ vsSystemPreferences::CheckResolutions()
 		m_supportedResolutionCount = 0;
 		/* Print valid modes */
 		vsLog("Available Modes\n");
-		for(i=0;modes[i];++i)
+		for(modeCount=0;modes[modeCount];++modeCount)
 		{
 			m_supportedResolutionCount++;
-			vsLog("%d:  %d x %d", i, modes[i]->w, modes[i]->h);
+			vsLog("%d:  %d x %d", modeCount, modes[modeCount]->w, modes[modeCount]->h);
 		}
 		
 		m_supportedResolution = new Resolution[m_supportedResolutionCount];
 		
-		for(i=0;modes[i];++i)
+		for(int i=0;i<modeCount;i++)
 		{
 			m_supportedResolution[i].width = modes[i]->w;
 			m_supportedResolution[i].height = modes[i]->h;
+			
+			if ( modes[i]->w > maxWidth )
+				maxWidth = modes[i]->w;
+			if ( modes[i]->h > maxHeight )
+				maxHeight = modes[i]->h;
 		}
 	}
-	m_resolution = m_preferences->GetPreference("Resolution", i-1, 0, i-1);
+	
+	m_resolutionX = m_preferences->GetPreference("ResolutionX", 800, 0, maxWidth);
+	m_resolutionY = m_preferences->GetPreference("ResolutionY", 600, 0, maxWidth);
+	int selectedResolution = modeCount-1;
+	int exactResolution = modeCount-1;
+	
+	int desiredWidth = m_resolutionX->m_value;
+	int desiredHeight = m_resolutionY->m_value;
+	
+	for ( int j = 0; j < modeCount; j++ )
+	{
+		if ( selectedResolution == modeCount-1 && m_supportedResolution[j].width <= desiredWidth )
+		{
+			selectedResolution = j;
+		}
+		if ( m_supportedResolution[j].width == desiredWidth && m_supportedResolution[j].height == desiredHeight )
+		{
+			exactResolution = j;
+			selectedResolution = j;
+			break;
+		}
+	}
+	
+	m_resolution = m_preferences->GetPreference("Resolution", selectedResolution, 0, modeCount-1);
+	m_resolutionX->m_value = m_supportedResolution[selectedResolution].width;
+	m_resolutionY->m_value = m_supportedResolution[selectedResolution].height;
+	m_resolution->m_value = selectedResolution;
 }
 
 Resolution *
@@ -232,6 +265,8 @@ void
 vsSystemPreferences::SetResolutionId(int id)
 {
 	m_resolution->m_value = id;
+	m_resolutionX->m_value = m_supportedResolution[id].width;
+	m_resolutionY->m_value = m_supportedResolution[id].height;
 }
 
 bool

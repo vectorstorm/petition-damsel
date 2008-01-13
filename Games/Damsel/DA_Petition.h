@@ -35,6 +35,9 @@ class daPetition : public vsSprite
 	int			m_maxSignatures;
 	
 	float		m_timer;
+	bool		m_exploding;
+	float		m_explodeTimer;
+	float		m_pulseTimer;
 	
 	vsVector2D	m_dropDestination;
 	

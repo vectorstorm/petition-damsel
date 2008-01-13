@@ -16,6 +16,7 @@
 #include "DA_ModeInGame.h"
 #include "DA_ModeIntro.h"
 #include "DA_ModeTitleScreen.h"
+#include "DA_ModeTutorial.h"
 
 #include "SND_Music.h"
 
@@ -24,6 +25,8 @@ REGISTER_GAME("Damsel", daGame)	// by naming us 'MainMenu', we're the game that 
 daGame::daGame()
 {
 	m_layerCount = 2;	// we need two layers;  one for the game, one for our HUD.
+	
+	m_shownIntro = false;
 }
 
 daGame::~daGame()
@@ -38,7 +41,7 @@ daGame::Init()
 	m_mode[Mode_Intro] = new daModeIntro(this);
 
 	m_mode[Mode_TitleScreen] = new daModeTitleScreen(this);
-	//m_mode[Mode_LevelSelect] = new daModeIntro(this);
+	m_mode[Mode_Tutorial] = new daModeTutorial(this);
 	m_mode[Mode_InGame] = new daModeInGame(this);
 	m_mode[Mode_Credits] = new daModeCredits(this);
 	
@@ -47,11 +50,18 @@ daGame::Init()
 	m_currentMusic = NULL;
 	
 	// TODO:  Check whether we've been through here before, and if so, go into TitleScreen!
+	
+	if ( !m_shownIntro )
+	{
+		m_shownIntro = true;
+		SetGameMode( m_mode[Mode_Intro] );
+	}
+	else
+		SetGameMode( m_mode[Mode_TitleScreen] );
 
-//	SetGameMode( m_mode[Mode_Intro] );
-//	SetGameMode( m_mode[Mode_TitleScreen] );
+	SetGameMode( m_mode[Mode_Tutorial] );
 //	SetGameMode( m_mode[Mode_Credits] );
-	SetGameMode( m_mode[Mode_InGame] );
+//	SetGameMode( m_mode[Mode_InGame] );
 }
 
 void

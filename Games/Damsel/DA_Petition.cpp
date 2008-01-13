@@ -25,6 +25,7 @@ daPetition::daPetition(daModeInGame *mode, int maxSignatures):
 	
 	m_verts = new vsVector2D[m_maxSignatures];
 	
+	m_exploding = false;
 	
 	vsVector2D top(0.0f,12.0f);
 	
@@ -37,6 +38,9 @@ daPetition::daPetition(daModeInGame *mode, int maxSignatures):
 	}
 	
 	SetColor(vsColor::Yellow);
+	
+	if ( !m_mode )
+		m_signatures = 3;
 }
 
 daPetition::~daPetition()
@@ -47,6 +51,8 @@ daPetition::~daPetition()
 void
 daPetition::Update( float timeStep )
 {
+	if ( !m_mode ) return;
+	
 	if ( m_state == Dropping )
 	{
 		vsTuneable float dropSpeed = 800.0f;
@@ -64,13 +70,25 @@ daPetition::Update( float timeStep )
 		SetPosition( GetPosition() + delta );
 	}
 	
-	if ( m_state == Held || m_state == Dropping || m_state == Dropped )
+	if ( m_exploding )
+	{
+		m_explodeTimer -= timeStep;
+		
+		if ( m_explodeTimer < 0.f )
+			Despawn();
+		
+	}
+	else if ( m_state == Held || m_state == Dropping || m_state == Dropped )
 	{
 		m_timer -= timeStep;
 		
 		if ( m_timer < 0.0f )
 		{
-			Despawn();
+			m_exploding = true;
+			m_explodeTimer = 3.0f;
+			m_pulseTimer = 0.f;
+			
+			m_mode->SpawnMadCar( GetPositionInLevel() );
 		}
 	}
 }
@@ -80,7 +98,18 @@ daPetition::_Draw( vsDisplayList *list )
 {
 	// draw lines around us, to denote how close we are to fully signed
 	
-	if ( m_state == Held || m_state == Dropping || m_state == Dropped )
+	if ( m_exploding )
+	{
+		SetColor( vsColor::Red );
+		
+		list->MoveTo(m_verts[0]*5.0f);
+		
+		for ( int i = 1; i < m_maxSignatures; i++ )
+		{
+			list->LineTo(m_verts[i]*5.0f);
+		}
+	}
+	else if ( !m_mode || m_state == Held || m_state == Dropping || m_state == Dropped )
 	{
 		vsTransform t;
 		if ( m_state == Held && m_player->GetScale().x < 0.f )	// flipped!
@@ -107,15 +136,18 @@ daPetition::_Draw( vsDisplayList *list )
 			}
 			list->LineTo(m_verts[i]);
 		}
-		list->PopTransform(   );
-		
-		vsString timerString = vsFormatString("%d", (int)m_timer);
-		vsDisplayList *timerList = vsBuiltInFont::CreateString(timerString, 20.f, 20.f, Justification_Center);
-		t.m_position.Set(0.f,-40.f);
-		list->PushTransform(t);
-		list->Append(*timerList);
 		list->PopTransform();
-		delete timerList;
+		
+		if ( m_mode )
+		{
+			vsString timerString = vsFormatString("%d", (int)m_timer);
+			vsDisplayList *timerList = vsBuiltInFont::CreateString(timerString, 20.f, 20.f, Justification_Center);
+			t.m_position.Set(0.f,-40.f);
+			list->PushTransform(t);
+			list->Append(*timerList);
+			list->PopTransform();
+			delete timerList;
+		}
 	}
 }
 
@@ -133,14 +165,21 @@ daPetition::GetPositionInLevel()
 void
 daPetition::Spawn( const vsVector2D &pos )
 {
+	SetColor( vsColor::Yellow );
 	SetPosition(pos);
 	RegisterOnLayer(0);
 	m_state = Pickup;
+	m_signatures = 0;
+	m_exploding = false;
 }
 
 void
 daPetition::Despawn()
 {
+	if ( m_maxSignatures == m_signatures )
+		m_mode->AddTimeLeft(10.0f);
+	if ( m_parent )
+		m_parent->RemoveChild(this);
 	Extract();
 	m_state = Dead;
 }
@@ -182,6 +221,7 @@ daPetition::Sign()
 		m_signatures++;
 		
 		m_mode->AddSignature();
+		m_mode->AddTimeLeft(4.0f);
 	}
 }
 

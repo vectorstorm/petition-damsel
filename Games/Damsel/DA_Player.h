@@ -24,6 +24,8 @@ class daPlayer : public daBasicPerson
 	daModeInGame *		m_mode;
 	daPetition *	m_petitionHeld;
 	
+	bool			m_spawned;
+	
 	void	HandlePetition();
 	void	AcquirePetition();
 
@@ -32,6 +34,14 @@ public:
 	daPlayer( daModeInGame *mode );
 	
 	virtual void	Update(float timeStep);
+	
+	virtual bool	CollisionCallback( const colEvent &collision );
+	virtual void	DestroyCallback();
+	
+	void			Die();
+	
+	bool			IsSpawned();
+	bool			TryRespawn();
 };
 
 #endif // DA_PLAYER_H

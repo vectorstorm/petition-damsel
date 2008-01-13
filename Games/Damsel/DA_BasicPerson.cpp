@@ -34,7 +34,7 @@ physSprite( vsDisplayList::Load("Player.vec"), (player)?ColFlag_Player:ColFlag_E
 	
 	colCircle circle;
 	circle.center = vsVector2D::Zero;
-	circle.radius = 15.0f;
+	circle.radius = 30.0f;
 	m_colObject->SetBoundingCircle( circle );
 }
 

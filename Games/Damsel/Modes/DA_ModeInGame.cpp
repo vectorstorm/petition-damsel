@@ -11,12 +11,14 @@
 
 #include "DA_Camera.h"
 #include "DA_Car.h"
+#include "DA_Cop.h"
 #include "DA_Game.h"
 #include "DA_LevelBackground.h"
 #include "DA_Hud.h"
 #include "DA_Player.h"
 #include "DA_Pedestrian.h"
 #include "DA_Petition.h"
+#include "DA_Splat.h"
 #include "SYS_Input.h"
 
 #include "VS_Layer.h"
@@ -40,6 +42,7 @@ daModeInGame::Init()
 	m_player = new daPlayer(this);
 	m_player->SetColor(vsColor::Red);
 	m_player->RegisterOnLayer(0);
+	m_respawnTimer = 5.0f;
 	
 	m_timeLimit = 60.0f;
 	
@@ -50,9 +53,20 @@ daModeInGame::Init()
 		//m_pedestrian[i]->Spawn( vsVector2D::Zero, 600.0f, true);
 	}
 	
+	for ( int i = 0; i < MAX_COPS; i++ )
+	{
+		m_cop[i] = new daCop(this);
+	}
+	
+	for ( int i = 0; i < MAX_SPLATS; i++ )
+	{
+		m_splat[i] = new daSplat();
+	}
+	m_nextSplat = 0;
+	
 	for ( int i = 0; i < MAX_CARS; i++ )
 	{
-		m_car[i] = new daCar;
+		m_car[i] = new daCar(this);
 		m_car[i]->SetColor(vsColor::White);
 	}
 	
@@ -80,6 +94,8 @@ daModeInGame::Init()
 	m_camera = new daCamera();
 	m_camera->FollowSprite( m_player );
 	vsScreen::Instance()->GetLayer(0)->SetCamera(m_camera);
+	
+	Splat(vsVector2D::Zero);
 }
 
 void
@@ -138,9 +154,16 @@ daModeInGame::Update( float timeStep )
 	if ( m_carSpawnTimer <= 0.f )
 	{
 		SpawnCar();
-		m_carSpawnTimer = vsRandom::GetFloat(3.0f, 8.0f);
+		m_carSpawnTimer = vsRandom::GetFloat(2.0f, 3.0f);
 	}
-
+	if ( !m_player->IsSpawned() )
+	{
+		m_respawnTimer -= timeStep;
+		
+		if ( m_respawnTimer <= 0.f && m_player->TryRespawn() )
+			m_respawnTimer = 5.0f;
+	}
+	
 	if ( m_game->GetInput()->WasPressed(CID_B) )
 		m_game->SetMode(daGame::Mode_TitleScreen);
 	
@@ -162,7 +185,26 @@ daModeInGame::SpawnCar()
 	{
 		if ( !m_car[i]->IsSpawned() )
 		{
-			m_car[i]->Spawn( vsVector2D(-1600,75), vsVector2D(1600,75), 10.0f, true );
+			if ( vsRandom::GetBool() )
+				m_car[i]->Spawn( vsVector2D(-1600,75), vsVector2D(1600,75), 10.0f, true );
+			else
+				m_car[i]->Spawn( vsVector2D(1600,-75), vsVector2D(-1600,-75), 10.0f, true );
+			return;
+		}
+	}
+}
+
+void
+daModeInGame::SpawnMadCar( const vsVector2D &where )
+{
+	for ( int i = 0; i < MAX_CARS; i++ )
+	{
+		if ( !m_car[i]->IsSpawned() )
+		{
+			if ( where.x > 0.f )
+				m_car[i]->Spawn( vsVector2D(-1600,75), where, 10.0f, true );
+			else
+				m_car[i]->Spawn( vsVector2D(1600,-75), where, 10.0f, true );
 			return;
 		}
 	}
@@ -298,8 +340,50 @@ void
 daModeInGame::AddSignature()
 {
 	m_score++;
-	
-	m_timeLimit += 5.0f;
 }
 
+void
+daModeInGame::Splat( const vsVector2D &where )
+{
+	m_splat[ m_nextSplat++ ]->Spawn(where);
+	
+	if ( m_nextSplat >= MAX_SPLATS )
+		m_nextSplat -= MAX_SPLATS;
+}
 
+void
+daModeInGame::SpawnCop( const vsVector2D &target )
+{
+	vsVector2D pos;
+	int edge = vsRandom::GetInt(4);
+	
+	if ( edge == 0 )		// left
+	{
+		pos.x = -1600.0f;
+		pos.y = vsRandom::GetFloat(-800.f,800.f);
+	}
+	else if ( edge == 1 )	// right
+	{
+		pos.x = 1600.0f;
+		pos.y = vsRandom::GetFloat(-800.f,800.f);
+	}
+	else if ( edge == 2 )	// top
+	{
+		pos.x = vsRandom::GetFloat(-1600.f,1600.f);
+		pos.y = -800.f;
+	}
+	else if ( edge == 3 )	// bottom
+	{
+		pos.x = vsRandom::GetFloat(-1600.f,1600.f);
+		pos.y = 800.f;
+	}
+	
+	for ( int i = 0; i < MAX_COPS; i++ )
+	{
+		if ( !m_cop[i]->IsSpawned() )
+		{
+			m_cop[i]->Spawn(pos, target, 50.0f, true);
+			return;
+		}
+	}
+}

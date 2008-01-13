@@ -89,7 +89,7 @@ daModeTitleScreen::Init()
 	m_title->SetPosition(m_iniTitlePos);
 	m_title->SetColor(vsColor::Black);
 	
-	//m_game->PlayMusic( daGame::Music_Title );
+	m_game->PlayMusic( daGame::Music_Title );
 }
 
 void
@@ -123,8 +123,10 @@ daModeTitleScreen::Update( float timeStep )
 					m_game->GoToPreferences();
 				if ( m_transitioningOutTo == Credits )
 					m_game->SetMode(daGame::Mode_Credits);
-//				else if ( m_transitioningOutTo == HowToPlay )
-//					m_game->SetMode(daGame::Mode_Tutorial);
+				else if ( m_transitioningOutTo == HowToPlay )
+					m_game->SetMode(daGame::Mode_Tutorial);
+				
+				return;
 			}
 			m_transitioningIn = false;
 			m_transitioningOut = false;

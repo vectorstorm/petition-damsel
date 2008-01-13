@@ -9,6 +9,7 @@
 
 #include "PREF_Game.h"
 
+#include "Core.h"
 #include "CORE_GameRegistry.h"
 
 #include "UT_Menu.h"
@@ -26,7 +27,8 @@ enum topItems
 {
 	Top_Screen,
 	Top_Sound,
-	Top_Controls
+	Top_Controls,
+	Top_Back
 };
 
 enum screenItems
@@ -55,11 +57,12 @@ prefGame::Init()
 
 	vsVector2D menuPos(-500,-300);
 	
-	m_topMenu = new utMenu(3);
+	m_topMenu = new utMenu(4);
 	
 	m_topMenu->SetItemLabel(Top_Screen, "Screen");
 	m_topMenu->SetItemLabel(Top_Sound, "Sound");
 	m_topMenu->SetItemLabel(Top_Controls, "Controls");
+	m_topMenu->SetItemLabel(Top_Back, "Back");
 	
 	m_topMenu->RegisterOnLayer(0);
 	m_topMenu->SetPosition(menuPos);
@@ -124,6 +127,10 @@ prefGame::Update(float timeStep)
 				{
 					m_state = Sound;
 					m_soundMenu->Enter();
+				}
+				if ( action.menuItemId == Top_Back )
+				{
+					core::SetExitToMenu();
 				}
 			}
 			break;

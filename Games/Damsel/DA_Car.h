@@ -12,14 +12,16 @@
 
 #include "PHYS_Sprite.h"
 
+class daModeInGame;
+
 class daCar : public physSprite
 {
 	typedef physSprite Parent;
 	
-	vsVector2D		m_exit;
+	daModeInGame *	m_mode;
 	
 	vsVector2D		m_target;
-	bool			m_homingOnTarget;
+	vsVector2D		m_desiredVelocity;
 	
 	bool			m_spawned;
 	
@@ -29,7 +31,7 @@ class daCar : public physSprite
 	
 public:
 	
-	daCar();
+	daCar( daModeInGame *mode );
 	virtual void	Update( float timeStep );
 	
 	bool			IsSpawned() { return m_spawned; }

@@ -30,6 +30,8 @@ daPlayer::daPlayer( daModeInGame *mode ):
 void
 daPlayer::Update(float timeStep)
 {
+	if ( !m_mode ) return;
+	
 	sysInput *input = core::GetGame()->GetInput();
 
 	vsVector2D desiredVelocity = input->GetLeftStick();
@@ -97,3 +99,47 @@ daPlayer::AcquirePetition()
 	m_petitionHeld->SetPosition( vsVector2D( 0.0f, s_petitionHeldOffset ) );
 }
 
+bool
+daPlayer::CollisionCallback( const colEvent &collision )
+{
+	if ( collision.colFlags & ColFlag_Shot )
+	{
+		SetDestroyed();
+		
+		return true;
+	}
+	
+	return Parent::CollisionCallback( collision );
+}
+
+void
+daPlayer::DestroyCallback()
+{
+	Die();
+}
+
+
+void
+daPlayer::Die()
+{
+	m_mode->Splat( GetPosition() );
+	m_spawned = false;
+	Extract();
+	SetCollisionsActive(false);
+}
+
+bool
+daPlayer::TryRespawn()
+{
+	SetCollisionsActive(true);
+	m_spawned = true;
+	RegisterOnLayer(0);
+	
+	return true;
+}
+
+bool
+daPlayer::IsSpawned()
+{
+	return m_spawned;
+}

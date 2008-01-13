@@ -51,6 +51,8 @@ class vsSystemPreferences
 	vsPreferences *	m_preferences;
 	
 	vsPreferenceObject *	m_resolution;
+	vsPreferenceObject *	m_resolutionX;
+	vsPreferenceObject *	m_resolutionY;
 	vsPreferenceObject *	m_fullscreen;
 	vsPreferenceObject *	m_bloom;
 

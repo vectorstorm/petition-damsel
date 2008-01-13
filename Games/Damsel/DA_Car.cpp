@@ -9,6 +9,8 @@
 
 #include "DA_Car.h"
 
+#include "DA_ModeInGame.h"
+
 #include "Core.h"
 #include "CORE_Game.h"
 
@@ -19,10 +21,10 @@
 #include "VS_Random.h"
 #include "VS_Screen.h"
 
-daCar::daCar():
+daCar::daCar( daModeInGame *mode ):
 physSprite( vsDisplayList::Load("Car.vec"), ColFlag_Shot, ColFlag_Shot ),
-m_spawned(false),
-m_homingOnTarget(false)
+m_mode(mode),
+m_spawned(false)
 {
 	colCircle circle;
 	circle.center = vsVector2D::Zero;
@@ -35,69 +37,30 @@ m_homingOnTarget(false)
 void
 daCar::Update(float timeStep)
 {
-	if ( !m_homingOnTarget )
-		PickTarget();
-	else
-		GoToTarget();
+	if ( !m_mode ) return;
+
+	GoToTarget();
 	
 	Parent::Update(timeStep);
 }
 
 void
-daCar::PickTarget()
-{
-	// check where I'm going to, vs. where I am.
-	
-	vsVector2D toExit = m_exit - GetPosition();
-	
-	if ( vsFabs(toExit.x) < 50.0f || vsFabs(toExit.y) < 50.0f )
-	{
-		m_target = m_exit;
-		m_homingOnTarget = true;
-	}
-	else
-	{
-		m_target = GetPosition();
-		
-		if ( vsFabs(m_exit.x) > vsFabs(m_exit.y) )	// side exit, so move vertically first
-			m_target.y = m_exit.y;
-		else
-			m_target.x = m_exit.x;
-		
-		m_homingOnTarget = true;
-	}
-}
-
-void
 daCar::GoToTarget()
 {
-	vsVector2D delta = m_target - GetPosition();
-	vsVector2D deltaExit = m_exit - GetPosition();
-	if ( deltaExit.Length() < 60.0f )
-	{
+	// check if we're going off the screen.
+	vsVector2D vel = GetVelocity();
+	
+	if ( vel.x < 0.f && GetPosition().x < -1600.0f )
 		Despawn();
-	}
-	else if ( delta.Length() < 50.0f )
+	else if ( vel.x > 0.f && GetPosition().x > 1600.0f )
+		Despawn();
+
 	{
-		m_homingOnTarget = false;
-	}
-	else
-	{
-		float distance = delta.Length();
-		delta.Normalise();
-		
-		if ( distance < 30.0f )
-			delta *= (1.0f / 30.0f);
-		
-		vsVector2D desiredVelocity = delta;
-		
-		vsTuneable float s_walkSpeed = 1000.0f;
-		desiredVelocity *= s_walkSpeed;
 		
 		// Let's compare my desired velocity against my actual velocity.
 		vsVector2D actualVelocity = GetVelocity();
 		
-		vsVector2D deltaVelocity = desiredVelocity - actualVelocity;
+		vsVector2D deltaVelocity = m_desiredVelocity - actualVelocity;
 		
 		vsTuneable float s_accelAmount = 5.0f;
 		AddForce( deltaVelocity * s_accelAmount );
@@ -132,11 +95,21 @@ daCar::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, float radi
 			!core::GetGame()->GetCollision()->CollisionTest( where, nextPos, radius, m_colObject->GetTestFlags() ) )
 		{
 			SetPosition(where);
-			m_exit = where_out;
+			m_target = where_out;
+			
+			vsVector2D dir = m_target - where;
+			vsAngle ang = vsAngle::FromForwardVector(dir);
+			SetAngle(ang);
+			
+			dir.Normalise();
+			dir *= 1000.0f;
+			
+			m_desiredVelocity = dir;
+			
+			SetVelocity(dir);
 			
 			SetAngleLocked(true);
 			SetAngularVelocity(0.0f);
-			SetVelocity( vsVector2D::Zero );
 			
 			m_colObject->SetTransform( m_transform );
 			m_colObject->Teleport();
@@ -146,7 +119,6 @@ daCar::Spawn(const vsVector2D &where_in, const vsVector2D &where_out, float radi
 			RegisterOnLayer(0);
 			
 			m_spawned = true;
-			m_homingOnTarget = false;
 		}
 	}
 }

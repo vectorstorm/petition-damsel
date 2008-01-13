@@ -17,7 +17,7 @@
 
 #include "SYS_Timer.h"
 
-const int c_fifoSize = 1024 * 200;		// 200k for our FIFO display list
+const int c_fifoSize = 1024 * 400;		// 200k for our FIFO display list
 
 vsScreen::vsScreen(int width, int height, int depth, bool fullscreen):
 	m_width(width),

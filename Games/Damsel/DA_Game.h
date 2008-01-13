@@ -23,7 +23,7 @@ public:
 	{
 		Mode_Intro,
 		Mode_TitleScreen,
-		//Mode_LevelSelect,
+		Mode_Tutorial,
 		Mode_InGame,
 		Mode_Credits,
 		MODE_MAX
@@ -40,6 +40,8 @@ private:
 	
 	sndMusic *			m_music[MUSIC_MAX];
 	sndMusic *			m_currentMusic;
+	
+	bool				m_shownIntro;
 	
 public:
 					daGame();
