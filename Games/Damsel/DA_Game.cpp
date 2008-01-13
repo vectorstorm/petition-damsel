@@ -59,7 +59,7 @@ daGame::Init()
 	else
 		SetGameMode( m_mode[Mode_TitleScreen] );
 
-	SetGameMode( m_mode[Mode_Tutorial] );
+//	SetGameMode( m_mode[Mode_Tutorial] );
 //	SetGameMode( m_mode[Mode_Credits] );
 //	SetGameMode( m_mode[Mode_InGame] );
 }
