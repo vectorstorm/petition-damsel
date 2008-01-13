@@ -183,14 +183,14 @@ fsFile::ReadColor()
 vsString
 fsFile::GetFullFilename(const vsString &filename_in)
 {
-	vsString dirName = core::GetGameName();
+	vsString dirName;
 	vsString prefsSuffix(".prefs");
 	// check if filename_in is a preferences file, and if so, then look in the preferences directory, instead of in the usual directory.
 	size_t prefsIndex = filename_in.find(prefsSuffix);
 	if ( prefsIndex == filename_in.length() - prefsSuffix.length() )
-	{
 		dirName = "Preferences";
-	}
+	else
+		dirName = core::GetGameName();
 	
 #if defined(__APPLE_CC__) && !defined(CMAKE_BUILD)
 	vsString result = vsFormatString("Damsel.app/Contents/Resources/Data/%s/%s", dirName.c_str(), filename_in.c_str());

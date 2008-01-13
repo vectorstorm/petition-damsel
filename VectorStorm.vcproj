@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="Core;Files;Games;Games\Testbed;Games\Preferences;Games\StarShot;Games\Asteroids;Memory;Mix;Sound;Systems;Systems\Collision;Utils;VS;VS\Utils;VS\Math;VS\Graphics"
+				AdditionalIncludeDirectories="Core;Files;Games;Games\Testbed;Games\Preferences;Games\Damsel;Games\Damsel\Modes;Memory;Mix;Sound;Systems;Systems\Collision;Utils;VS;VS\Utils;VS\Math;VS\Graphics"
 				PreprocessorDefinitions="WIN32;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="Core;Files;Games;Games\Testbed;Games\Preferences;Games\StarShot;Games\Asteroids;Memory;Mix;Sound;Systems;Systems\Collision;Utils;VS;VS\Utils;VS\Math;VS\Graphics"
+				AdditionalIncludeDirectories="Core;Files;Games;Games\Testbed;Games\Preferences;Games\Damsel;Games\Damsel\Modes;Memory;Mix;Sound;Systems;Systems\Collision;Utils;VS;VS\Utils;VS\Math;VS\Graphics"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -458,177 +458,149 @@
 		<Filter
 			Name="Games"
 			>
-			<File
-				RelativePath=".\Games\GM_MainMenu.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Games\GM_MainMenu.h"
-				>
-			</File>
 			<Filter
-				Name="Asteroids"
+				Name="Damsel"
 				>
 				<File
-					RelativePath=".\Games\Asteroids\AST_Asteroid.cpp"
+					RelativePath=".\Games\Damsel\DA_BasicPerson.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_Asteroid.h"
+					RelativePath=".\Games\Damsel\DA_BasicPerson.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_Camera.cpp"
+					RelativePath=".\Games\Damsel\DA_Camera.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_Camera.h"
+					RelativePath=".\Games\Damsel\DA_Camera.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_Game.cpp"
+					RelativePath=".\Games\Damsel\DA_Car.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_Game.h"
+					RelativePath=".\Games\Damsel\DA_Car.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_HowToPlay.cpp"
+					RelativePath=".\Games\Damsel\DA_Cop.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_HowToPlay.h"
+					RelativePath=".\Games\Damsel\DA_Cop.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_Hud.cpp"
+					RelativePath=".\Games\Damsel\DA_Game.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_Hud.h"
+					RelativePath=".\Games\Damsel\DA_Game.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_ModeGameOver.cpp"
+					RelativePath=".\Games\Damsel\DA_Hud.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_ModeGameOver.h"
+					RelativePath=".\Games\Damsel\DA_Hud.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_ModeHowTo.cpp"
+					RelativePath=".\Games\Damsel\DA_LevelBackground.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_ModeHowTo.h"
+					RelativePath=".\Games\Damsel\DA_LevelBackground.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_ModeInGame.cpp"
+					RelativePath=".\Games\Damsel\DA_Pedestrian.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_ModeInGame.h"
+					RelativePath=".\Games\Damsel\DA_Pedestrian.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_ModeTitleScreen.cpp"
+					RelativePath=".\Games\Damsel\DA_Petition.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_ModeTitleScreen.h"
+					RelativePath=".\Games\Damsel\DA_Petition.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_PlayerShip.cpp"
+					RelativePath=".\Games\Damsel\DA_Player.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_PlayerShip.h"
+					RelativePath=".\Games\Damsel\DA_Player.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_PlayerShot.cpp"
+					RelativePath=".\Games\Damsel\DA_Splat.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Games\Asteroids\AST_PlayerShot.h"
+					RelativePath=".\Games\Damsel\DA_Splat.h"
 					>
 				</File>
-				<File
-					RelativePath=".\Games\Asteroids\AST_Star.cpp"
+				<Filter
+					Name="Modes"
 					>
-				</File>
-				<File
-					RelativePath=".\Games\Asteroids\AST_Star.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="StarShot"
-				>
-				<File
-					RelativePath=".\Games\StarShot\SST_Fireworks.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Fireworks.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Game.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Game.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Hud.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Hud.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_ModeInGame.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_ModeInGame.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Rocket.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Rocket.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Sequence.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\StarShot\SST_Sequence.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="TestBed"
-				>
-				<File
-					RelativePath=".\Games\Testbed\TB_Game.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Games\Testbed\TB_Game.h"
-					>
-				</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeCredits.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeCredits.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeInGame.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeInGame.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeIntro.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeIntro.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeLevelSelect.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeLevelSelect.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeTitleScreen.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeTitleScreen.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeTutorial.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Games\Damsel\Modes\DA_ModeTutorial.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Preferences"

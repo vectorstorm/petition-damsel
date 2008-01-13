@@ -158,7 +158,7 @@ daModeIntro::Quote( float timeStep )
 			m_line[i-1]->SetColor(c);
 	}
 	
-	if ( /*m_introTimer >= (INTRO_LINES+1.f) &&*/ m_game->GetInput()->WasPressed(CID_A) )
+	if ( m_introTimer >= ((INTRO_LINES*c_timeBetweenLines)+3.2f) || m_game->GetInput()->WasPressed(CID_A) )
 	{
 		m_game->PlayMusic( daGame::Music_Title );
 		m_state = State_TransitionIn;

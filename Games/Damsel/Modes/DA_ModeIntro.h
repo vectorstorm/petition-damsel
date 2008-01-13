@@ -26,7 +26,7 @@ class daModeIntro : public coreGameMode
 	vsSprite *		m_line[INTRO_LINES];
 	vsSprite *		m_word[FAKE_WORDS];
 	vsVector2D		m_wordOrigPos[FAKE_WORDS];
-	
+
 	float			m_introTimer;
 	
 	enum State
