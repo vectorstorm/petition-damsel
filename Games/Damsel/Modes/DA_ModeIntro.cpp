@@ -29,6 +29,15 @@
 daModeIntro::daModeIntro( daGame *game ):
 	m_game(game)
 {
+}
+
+daModeIntro::~daModeIntro()
+{
+}
+
+void
+daModeIntro::Init()
+{
 	vsString fakeWord[FAKE_WORDS] =
 	{
 		"\"Beauteous ",
@@ -39,9 +48,9 @@ daModeIntro::daModeIntro( daGame *game ):
 		"ill-timed",
 		","
 	};
-
+	
 	vsString lineText[INTRO_LINES] = {
-//		"\"Beauteous damsel, your petition is ill-timed,",
+		//		"\"Beauteous damsel, your petition is ill-timed,",
 		"For I am prevented from embarking on any other",
 		"adventure until I have brought the one to which I",
 		"have pledged myself to a successful conclusion;",
@@ -77,20 +86,7 @@ daModeIntro::daModeIntro( daGame *game ):
 		
 		m_line[i]->SetPosition( pos );
 	}
-}
 
-daModeIntro::~daModeIntro()
-{
-	for ( int i = 0; i < INTRO_LINES; i++ )
-		vsDelete(m_line[i]);
-
-	for ( int i = 0; i < FAKE_WORDS; i++ )
-		vsDelete(m_word[i]);
-}
-
-void
-daModeIntro::Init()
-{
 	m_introTimer = 0.f;
 	m_game->PlayMusic( daGame::Music_Quote );
 	m_state = State_Quote;
@@ -113,6 +109,11 @@ daModeIntro::Init()
 void
 daModeIntro::Deinit()
 {
+	for ( int i = 0; i < INTRO_LINES; i++ )
+		vsDelete(m_line[i]);
+	
+	for ( int i = 0; i < FAKE_WORDS; i++ )
+		vsDelete(m_word[i]);
 }
 
 void
@@ -223,6 +224,7 @@ daModeIntro::TransitionIn( float timeStep )
 				{
 					c = vsColor::Black;
 					m_game->SetMode( daGame::Mode_TitleScreen );
+					return;
 				}
 			}
 			m_word[i]->SetColor(c);
