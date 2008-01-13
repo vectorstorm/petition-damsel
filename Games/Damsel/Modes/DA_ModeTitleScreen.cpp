@@ -75,6 +75,7 @@ daModeTitleScreen::Init()
 	m_title->AddChild(damsel);
 
 	m_background = new daLevelBackground;
+	m_background->SetPosition(vsVector2D(-400.0f,100.0f));
 	m_background->RegisterOnLayer(0);
 	m_background->FadeIn();
 	
